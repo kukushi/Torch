@@ -12,8 +12,17 @@ import QuartzCore
 
 public class LineRefreshView: RefreshView {
     
-    var color = UIColor(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0)
-    var separatorColor = UIColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1.0)
+    var color: UIColor = UIColor(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0) {
+        willSet {
+            layerLoader.strokeColor = newValue.CGColor
+        }
+    }
+    
+    var separatorColor: UIColor = UIColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1.0) {
+        willSet {
+            layerSeparator.strokeColor = newValue.CGColor
+        }
+    }
     
     public let textLabel: UILabel = {
         let label = UILabel()
@@ -25,7 +34,6 @@ public class LineRefreshView: RefreshView {
     private let layerLoader: CAShapeLayer = {
         let layer = CAShapeLayer()
         layer.lineWidth = 4.0
-        layer.strokeColor = color.CGColor
         layer.strokeEnd = 0.0
         return layer
     }()
@@ -33,7 +41,6 @@ public class LineRefreshView: RefreshView {
     private let layerSeparator: CAShapeLayer = {
         let layer = CAShapeLayer()
         layer.lineWidth = 1.0
-        layer.strokeColor = separatorColor.CGColor
         return layer
     }()
     
