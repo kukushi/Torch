@@ -39,9 +39,9 @@ public class RefreshView: UIView {
         
         initialize()
     }
-    
-    public required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+
+    required public init(coder aDecoder: NSCoder) {
+          super.init(coder: aDecoder)
     }
     
     public override func awakeFromNib() {
