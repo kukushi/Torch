@@ -43,10 +43,10 @@ public extension UIScrollView {
     }
     
     public func stopRefresh() {
-        self.refreshView?.stopAnimating()
+        refreshView?.stopAnimating()
     }
     
     public func startRefresh() {
-        self.refreshView?.startAnimating()
+        refreshView?.startAnimating()
     }
 }

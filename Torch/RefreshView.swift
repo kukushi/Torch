@@ -14,7 +14,10 @@ public class RefreshView: UIView {
     
     lazy var loading = false
     
+    private var contentOffsetY: CGFloat!
+    
     private var originalInsetTop: CGFloat = 0
+    private var originalContentOffsetY: CGFloat = 0
     
     public enum RefreshState {
         case Pulling
@@ -68,10 +71,11 @@ public class RefreshView: UIView {
     }
     
     override public func didMoveToSuperview() {
-        scrollView.addObserver(self, forKeyPath: "contentOffset", options: .New, context: nil)
-        
-        
-        originalInsetTop = isInsetAdjusted ? 64 : 0
+        if scrollView != nil {
+            scrollView.addObserver(self, forKeyPath: "contentOffset", options: .New, context: nil)
+            originalInsetTop = scrollView.contentInset.top +  (isInsetAdjusted ? 64 : 0)
+            originalContentOffsetY = scrollView.contentOffset.y - (isInsetAdjusted ? 64 : 0)
+        }
 //                scrollViewBouncesDefaultValue = scrollView.bounces
 //        scrollViewInsetsDefaultValue = scrollView.contentInset
     }
@@ -112,8 +116,10 @@ public class RefreshView: UIView {
         loading = true
         
         UIView.animateWithDuration(0.4, animations: { () -> Void in
+            println("\(self.scrollView.contentInset.top) \(self.scrollView.contentOffset.y)" )
             self.scrollView.contentOffset.y = 0
             self.scrollView.contentInset.top += self.frame.height
+            println("\(self.scrollView.contentInset.top) \(self.scrollView.contentOffset.y)" )
             }) { (finished) -> Void in
                 self.action()
         }
@@ -127,7 +133,10 @@ public class RefreshView: UIView {
         //scrollView.bounces = true
         
         UIView.animateWithDuration(0.3, animations: { () -> Void in
+            println("\(self.scrollView.contentInset.top) \(self.scrollView.contentOffset.y)" )
+            self.scrollView.contentOffset.y = self.originalContentOffsetY
             self.scrollView.contentInset.top -= self.frame.height
+           println("\(self.scrollView.contentInset.top) \(self.scrollView.contentOffset.y)" )
         })
     }
     
