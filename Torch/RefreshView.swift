@@ -76,8 +76,6 @@ public class RefreshView: UIView {
             originalInsetTop = scrollView.contentInset.top +  (isInsetAdjusted ? 64 : 0)
             originalContentOffsetY = scrollView.contentOffset.y - (isInsetAdjusted ? 64 : 0)
         }
-//                scrollViewBouncesDefaultValue = scrollView.bounces
-//        scrollViewInsetsDefaultValue = scrollView.contentInset
     }
     
     // MARK: KVO
