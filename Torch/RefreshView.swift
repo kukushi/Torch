@@ -114,10 +114,8 @@ public class RefreshView: UIView {
         loading = true
         
         UIView.animateWithDuration(0.4, animations: { () -> Void in
-            println("\(self.scrollView.contentInset.top) \(self.scrollView.contentOffset.y)" )
             self.scrollView.contentOffset.y = 0
             self.scrollView.contentInset.top += self.frame.height
-            println("\(self.scrollView.contentInset.top) \(self.scrollView.contentOffset.y)" )
             }) { (finished) -> Void in
                 self.action()
         }
@@ -131,10 +129,8 @@ public class RefreshView: UIView {
         //scrollView.bounces = true
         
         UIView.animateWithDuration(0.3, animations: { () -> Void in
-            println("\(self.scrollView.contentInset.top) \(self.scrollView.contentOffset.y)" )
             self.scrollView.contentOffset.y = self.originalContentOffsetY
             self.scrollView.contentInset.top -= self.frame.height
-           println("\(self.scrollView.contentInset.top) \(self.scrollView.contentOffset.y)" )
         })
     }
     
