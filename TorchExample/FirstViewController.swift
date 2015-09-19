@@ -25,6 +25,11 @@ class FirstViewController: UIViewController {
                 }
             }
         })
+        
+        let loadMoreView = LoadMoreView()
+        tableView.addLoadMoreRefresher(loadMoreView) { () -> Void in
+            
+        }
     }
 
     override func didReceiveMemoryWarning() {

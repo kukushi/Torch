@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5200E1C51BAD471F003EEAEF /* LoadMoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5200E1C41BAD471F003EEAEF /* LoadMoreView.swift */; };
 		523C8CDC1AC953610068E3C7 /* Torch.h in Headers */ = {isa = PBXBuildFile; fileRef = 523C8CDB1AC953610068E3C7 /* Torch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		523C8CE21AC953610068E3C7 /* Torch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 523C8CD61AC953610068E3C7 /* Torch.framework */; };
 		523C8CE91AC953610068E3C7 /* TorchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523C8CE81AC953610068E3C7 /* TorchTests.swift */; };
@@ -40,6 +41,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5200E1C41BAD471F003EEAEF /* LoadMoreView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadMoreView.swift; sourceTree = "<group>"; };
 		523C8CD61AC953610068E3C7 /* Torch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Torch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		523C8CDA1AC953610068E3C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		523C8CDB1AC953610068E3C7 /* Torch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Torch.h; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 		523C8CD81AC953610068E3C7 /* Torch */ = {
 			isa = PBXGroup;
 			children = (
+				5200E1C41BAD471F003EEAEF /* LoadMoreView.swift */,
 				523C8CDB1AC953610068E3C7 /* Torch.h */,
 				523C8CF21AC953720068E3C7 /* UIScrollView+Torch.swift */,
 				523C8CF41AC953AE0068E3C7 /* RefreshView.swift */,
@@ -367,6 +370,7 @@
 				523C8D4F1AC967010068E3C7 /* LineRefreshView.swift in Sources */,
 				523C8CF51AC953AE0068E3C7 /* RefreshView.swift in Sources */,
 				523C8CF31AC953720068E3C7 /* UIScrollView+Torch.swift in Sources */,
+				5200E1C51BAD471F003EEAEF /* LoadMoreView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
