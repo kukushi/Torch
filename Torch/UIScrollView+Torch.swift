@@ -21,9 +21,9 @@ public extension UIScrollView {
         set {
             self.refreshView?.removeFromSuperview()
             
-            objc_setAssociatedObject(self, &RefreshViewKey, newValue, objc_AssociationPolicy(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+            objc_setAssociatedObject(self, &RefreshViewKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             if let view = newValue {
-                view.setTranslatesAutoresizingMaskIntoConstraints(false)
+                view.translatesAutoresizingMaskIntoConstraints = false
                 addSubview(view)
                 let constraints = [
                     NSLayoutConstraint(item: view, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1.0, constant: 0.0),

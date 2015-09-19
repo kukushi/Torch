@@ -43,7 +43,7 @@ public class RefreshView: UIView {
         initialize()
     }
 
-    required public init(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
           super.init(coder: aDecoder)
     }
     
@@ -80,7 +80,7 @@ public class RefreshView: UIView {
     
     // MARK: KVO
     
-    override public func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
+    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         let viewHeight = frame.height
         if keyPath == "contentOffset" {
             let offset = scrollView.contentOffset.y + originalInsetTop
