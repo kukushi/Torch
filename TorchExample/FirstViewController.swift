@@ -14,7 +14,7 @@ class FirstViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
         let refreshView = LineRefreshView()
         refreshView.isInsetAdjusted = true
         tableView.addPullDownRefresher(refreshView, action: { () -> Void in
@@ -24,21 +24,17 @@ class FirstViewController: UIViewController {
                     self.tableView.stopRefresh()
                 }
             }
-            
         })
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-
-
 }
 
 extension FirstViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell") as! UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("Cell")!
         cell.textLabel?.text = "1"
         return cell
     }
