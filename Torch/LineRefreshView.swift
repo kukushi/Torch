@@ -26,7 +26,7 @@ public class LineRefreshView: RefreshView {
     
     public let textLabel: UILabel = {
         let label = UILabel()
-        label.setTranslatesAutoresizingMaskIntoConstraints(false)
+        label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .Center
         return label
     }()
@@ -56,8 +56,8 @@ public class LineRefreshView: RefreshView {
         addSubview(textLabel)
         let views = ["textLabel": textLabel]
         let formats = ["H:|-(>=10)-[textLabel]-(>=10)-|", "V:|-(>=15,==15@500)-[textLabel]-(>=15,==15@500)-|"]
-        let constraints = formats.reduce([AnyObject]()) { constraints, format in
-            return constraints + NSLayoutConstraint.constraintsWithVisualFormat(format, options: nil, metrics: nil, views: views)
+        let constraints = formats.reduce([NSLayoutConstraint]()) { constraints, format in
+            return constraints + NSLayoutConstraint.constraintsWithVisualFormat(format, options: [], metrics: nil, views: views)
             } + [
                 NSLayoutConstraint(item: textLabel, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1.0, constant: 0.0),
                 NSLayoutConstraint(item: textLabel, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1.0, constant: 0.0)
@@ -99,7 +99,7 @@ public class LineRefreshView: RefreshView {
     
     public override func startAnimating() {
         super.startAnimating()
-        var pathAnimationEnd = CABasicAnimation(keyPath: "strokeEnd")
+        let pathAnimationEnd = CABasicAnimation(keyPath: "strokeEnd")
         pathAnimationEnd.duration = 0.5
         pathAnimationEnd.repeatCount = 100
         pathAnimationEnd.autoreverses = true
@@ -107,7 +107,7 @@ public class LineRefreshView: RefreshView {
         pathAnimationEnd.toValue = 1.0
         layerLoader.addAnimation(pathAnimationEnd, forKey: "strokeEndAnimation")
         
-        var pathAnimationStart = CABasicAnimation(keyPath: "strokeStart")
+        let pathAnimationStart = CABasicAnimation(keyPath: "strokeStart")
         pathAnimationStart.duration = 0.5
         pathAnimationStart.repeatCount = 100
         pathAnimationStart.autoreverses = true
