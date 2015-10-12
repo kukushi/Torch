@@ -92,18 +92,18 @@ public class RefreshView: UIView {
             if !loading {
                 
 //                print("\(offset) - \(scrollView.contentSize.height - scrollView.frame.height)")
-                if scrollView.dragging && offset != 0 {
+                if offset > scrollView.contentSize.height - scrollView.frame.height && !triggerd {
+                    triggerd = true
+                    pullUpAction?()
+                }
+                else if scrollView.dragging && offset != 0 {
 //                    print("Noew")
                     progressAnimating(-offset / viewHeight)
                 }
                 else if viewHeight != 0 && offset < -viewHeight {
                     startAnimating()
                 }
-                else if offset > scrollView.contentSize.height - scrollView.frame.height && !triggerd {
-                    triggerd = true
-                    pullUpAction?()
-                }
-                else if offset < scrollView.contentSize.height - scrollView.frame.height && triggerd {
+                else if offset <= scrollView.contentSize.height - scrollView.frame.height && triggerd {
                     triggerd = false
                 }
             }
