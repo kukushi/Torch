@@ -20,8 +20,8 @@
 		523C8D3B1AC960630068E3C7 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 523C8D391AC960630068E3C7 /* LaunchScreen.xib */; };
 		523C8D471AC960630068E3C7 /* TorchExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523C8D461AC960630068E3C7 /* TorchExampleTests.swift */; };
 		523C8D4F1AC967010068E3C7 /* LineRefreshView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523C8D4E1AC967010068E3C7 /* LineRefreshView.swift */; };
-		52489A581BCAB20500FE6AD9 /* PullUpRefreshView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52489A571BCAB20500FE6AD9 /* PullUpRefreshView.swift */; settings = {ASSET_TAGS = (); }; };
-		52C7828A1BCAA6FA00C26070 /* AnimatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C782891BCAA6FA00C26070 /* AnimatorProtocol.swift */; settings = {ASSET_TAGS = (); }; };
+		52489A581BCAB20500FE6AD9 /* PullUpRefreshView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52489A571BCAB20500FE6AD9 /* PullUpRefreshView.swift */; };
+		52C7828A1BCAA6FA00C26070 /* AnimatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C782891BCAA6FA00C26070 /* AnimatorProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -537,6 +537,7 @@
 				INFOPLIST_FILE = Torch/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.kukushi.torch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -554,6 +555,7 @@
 				INFOPLIST_FILE = Torch/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.kukushi.torch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
