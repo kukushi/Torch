@@ -61,7 +61,7 @@ public extension UIScrollView {
         refreshOberver.action = action
         
         let width = UIScreen.mainScreen().bounds.width
-        let refreshView = SimpleRefreshView(frame: CGRectMake(0, 0, width, PullToRefreshViewHeight))
+        let refreshView = PlainRefreshView(frame: CGRectMake(0, 0, width, PullToRefreshViewHeight))
         refreshOberver.pullToRefreshAnimator = refreshView
         refreshOberver.addSubview(refreshView)
         

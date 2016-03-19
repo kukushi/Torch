@@ -1,5 +1,5 @@
 //
-//  SimpleRefreshView.swift
+//  PlainRefreshView.swift
 //  Torch
 //
 //  Created by Xing He on 3/19/16.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class SimpleRefreshView: UIView, PullToRefreshViewDelegate {
+public class PlainRefreshView: UIView, PullToRefreshViewDelegate {
     
     public var pullToRefreshText = NSLocalizedString("Pull to refresh", comment: "Refresher")
     public var loadingText = NSLocalizedString("Loading ...", comment: "Refresher")
@@ -36,7 +36,9 @@ public class SimpleRefreshView: UIView, PullToRefreshViewDelegate {
         return layer
     }()
     
-    override init(frame: CGRect) {
+    // MARK:
+    
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         
         textLabel.font = UIFont.systemFontOfSize(16)
@@ -50,6 +52,8 @@ public class SimpleRefreshView: UIView, PullToRefreshViewDelegate {
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK:
     
     public override func layoutSubviews() {
         super.layoutSubviews()
