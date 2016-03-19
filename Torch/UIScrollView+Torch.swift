@@ -8,38 +8,43 @@
 
 import UIKit
 
-public typealias RefreshAction = () -> Void
+public typealias RefreshAction = (scrollView: UIScrollView) -> Void
 
-private var RefreshViewKey = "RefreshViewKey"
-private var PullUpRefreshViewKey = "PullUpRefreshViewKey"
+private var RefreshViewKey = "com.kukushi.RefreshViewKey"
+private var PullUpRefreshViewKey = "com.kukushi.PullUpRefreshViewKey"
+
+let PullToRefreshViewHeight = CGFloat(44)
+
+public enum PullToRefreshViewState {
+    case Refreshing
+    case Pulling
+    case ReadyToRelease
+}
+
+public protocol PullToRefreshViewDelegate {
+    func pullToRefreshAnimationDidStart(view: RefreshObserverView)
+    func pullToRefreshAnimationDidEnd(view: RefreshObserverView)
+    func pullToRefresh(view: RefreshObserverView, progressDidChange progress: CGFloat)
+    func pullToRefresh(view: RefreshObserverView, stateDidChange state: PullToRefreshViewState)
+}
 
 public extension UIScrollView {
-    public private(set) var refreshView: RefreshView? {
+
+    // MARK:
+
+    public private(set) var refreshView: RefreshObserverView? {
         get {
-            return objc_getAssociatedObject(self, &RefreshViewKey) as? RefreshView
+            return objc_getAssociatedObject(self, &RefreshViewKey) as? RefreshObserverView
         }
         
         set {
-            self.refreshView?.removeFromSuperview()
-            
             objc_setAssociatedObject(self, &RefreshViewKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            if let view = newValue {
-                view.translatesAutoresizingMaskIntoConstraints = false
-                addSubview(view)
-                let constraints = [
-                    NSLayoutConstraint(item: view, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1.0, constant: 0.0),
-                    NSLayoutConstraint(item: view, attribute: .Leading, relatedBy: .Equal, toItem: self, attribute: .Leading, multiplier: 1.0, constant: 0.0),
-                    NSLayoutConstraint(item: view, attribute: .Trailing, relatedBy: .Equal, toItem: self, attribute: .Trailing, multiplier: 1.0, constant: 0.0),
-                    NSLayoutConstraint(item: view, attribute: .Width, relatedBy: .Equal, toItem: self, attribute: .Width, multiplier: 1.0, constant: 0.0)
-                ]
-                addConstraints(constraints)
-            }
         }
     }
     
-    public private(set) var pullUpRefreshView: RefreshView? {
+    public private(set) var pullUpRefreshView: RefreshObserverView? {
         get {
-            return objc_getAssociatedObject(self, &PullUpRefreshViewKey) as? RefreshView
+            return objc_getAssociatedObject(self, &PullUpRefreshViewKey) as? RefreshObserverView
         }
         
         set {
@@ -48,24 +53,49 @@ public extension UIScrollView {
         }
     }
     
-    public func addPullDownRefresher(refreshView: RefreshView, action: RefreshAction) {
-        self.refreshView = refreshView
-        addSubview(refreshView)
-        refreshView.action = action
+    // MARK:
+    
+    
+    public func addPullToRefresh(action: RefreshAction) {
+        let refreshOberver = RefreshObserverView(frame: CGRectMake(0, -PullToRefreshViewHeight, 0, 0))
+        refreshOberver.action = action
+        
+        let width = UIScreen.mainScreen().bounds.width
+        let refreshView = SimpleRefreshView(frame: CGRectMake(0, 0, width, PullToRefreshViewHeight))
+        refreshOberver.pullToRefreshAnimator = refreshView
+        refreshOberver.addSubview(refreshView)
+        
+        self.refreshView = refreshOberver
+        addSubview(refreshOberver)
     }
     
-    public func addPullUpRefresher(refreshView: RefreshView, action: RefreshAction) {
-        self.pullUpRefreshView = refreshView
-        addSubview(refreshView)
-        refreshView.pullUpAction = action
+    public func addPullToRefresh<T: UIView where T: PullToRefreshViewDelegate>(refreshView: T, action: RefreshAction) {
+        let refreshOberver = RefreshObserverView(frame: CGRectMake(0, -PullToRefreshViewHeight, 0, 0))
+        refreshOberver.action = action
+        
+        refreshOberver.pullToRefreshAnimator = refreshView
+        refreshOberver.addSubview(refreshView)
+        
+        self.refreshView = refreshOberver
+        addSubview(refreshOberver)
     }
+
+//    public func addPullDownRefresher<T: UIView where T: RefreshViewDelegate>(refreshView: T, action: RefreshAction) {
+//        self.refreshView = refreshView
+//        addSubview(refreshView)
+//        refreshView.action = action
+//    }
+//    
+//    public func addPullUpRefresher(refreshView: RefreshView, action: RefreshAction) {
+//        self.pullUpRefreshView = refreshView
+//        addSubview(refreshView)
+//        refreshView.pullUpAction = action
+//    }
+    
+    // MARK:
     
     public func stopRefresh() {
         refreshView?.stopAnimating()
-    }
-    
-    public func completeLoading() {
-        refreshView?.completeLoading()
     }
     
     public func startRefresh() {

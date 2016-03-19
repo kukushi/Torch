@@ -9,6 +9,26 @@
 import UIKit
 import Torch
 
+public class XX: UIView, PullToRefreshViewDelegate {
+    
+    public func pullToRefresh(view: RefreshObserverView, stateDidChange state: PullToRefreshViewState) {
+        
+    }
+    
+    public func pullToRefreshAnimationDidStart(view: RefreshObserverView) {
+        
+    }
+    
+    public func pullToRefresh(view: RefreshObserverView, progressDidChange progress: CGFloat) {
+        
+    }
+    
+    public func pullToRefreshAnimationDidEnd(view: RefreshObserverView) {
+        
+    }
+}
+
+
 class FirstViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
@@ -16,33 +36,16 @@ class FirstViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        let refreshView = LineRefreshView()
-//        refreshView.isInsetAdjusted = true
-        tableView.addPullDownRefresher(refreshView, action: { () -> Void in
+        
+        tableView.refreshView?.isInsetAdjusted = automaticallyAdjustsScrollViewInsets
+        tableView.addPullToRefresh { (scrollView) -> Void in
             NSOperationQueue().addOperationWithBlock {
                 sleep(4)
                 NSOperationQueue.mainQueue().addOperationWithBlock {
-                    self.tableView.stopRefresh()
-                    
-                    print("Inset Top \(self.tableView.contentInset.top)")
-                    print("Offset Y \(self.tableView.contentOffset.y)")
+                    scrollView.stopRefresh()
                 }
             }
-            
-        })
-        
-        tableView.addPullUpRefresher(LineRefreshView()) { () -> Void in
-            NSOperationQueue.mainQueue().addOperationWithBlock {
-                self.tableView.completeLoading()
-                
-                self.count += 10
-                self.tableView.reloadData()
-            }
         }
-        
-        print("Inset Top \(tableView.contentInset.top)")
-        print("Offset Y \(tableView.contentOffset.y)")
     }
     
 

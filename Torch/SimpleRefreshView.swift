@@ -1,28 +1,18 @@
 //
-//  LineRefreshView.swift
+//  SimpleRefreshView.swift
 //  Torch
 //
-//  Created by kukushi on 3/30/15.
-//  Copyright (c) 2015 Xing He. All rights reserved.
+//  Created by Xing He on 3/19/16.
+//  Copyright © 2016 Xing He. All rights reserved.
 //
 
-
 import UIKit
-import QuartzCore
 
-public class LineRefreshView: RefreshView {
+public class SimpleRefreshView: UIView, PullToRefreshViewDelegate {
     
-    var color: UIColor = UIColor(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0) {
-        willSet {
-            layerLoader.strokeColor = newValue.CGColor
-        }
-    }
-    
-    var separatorColor: UIColor = UIColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1.0) {
-        willSet {
-            layerSeparator.strokeColor = newValue.CGColor
-        }
-    }
+    public var pullToRefreshText = NSLocalizedString("Pull to refresh", comment: "Refresher")
+    public var loadingText = NSLocalizedString("Loading ...", comment: "Refresher")
+    public var releaseToRefreshText = NSLocalizedString("Release to refresh", comment: "Refresher")
     
     public let textLabel: UILabel = {
         let label = UILabel()
@@ -33,43 +23,38 @@ public class LineRefreshView: RefreshView {
     
     private let layerLoader: CAShapeLayer = {
         let layer = CAShapeLayer()
+        layer.strokeColor = UIColor.grayColor().CGColor
         layer.lineWidth = 4.0
         layer.strokeEnd = 0.0
         return layer
     }()
-
+    
     private let layerSeparator: CAShapeLayer = {
         let layer = CAShapeLayer()
+        layer.strokeColor = UIColor.grayColor().CGColor
         layer.lineWidth = 1.0
         return layer
     }()
     
-    
-    
-    public var pullToRefreshText = NSLocalizedString("Pull to refresh", comment: "Refresher")
-    public var loadingText = NSLocalizedString("Loading ...", comment: "Refresher")
-    public var releaseToRefreshText = NSLocalizedString("Release to refresh", comment: "Refresher")
-    
-    public override func initialize() {
-        super.initialize()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
+        textLabel.font = UIFont.systemFontOfSize(16)
+        textLabel.sizeToFit()
         addSubview(textLabel)
-        let views = ["textLabel": textLabel]
-        let formats = ["H:|-(>=10)-[textLabel]-(>=10)-|", "V:|-(>=15,==15@500)-[textLabel]-(>=15,==15@500)-|"]
-        let constraints = formats.reduce([NSLayoutConstraint]()) { constraints, format in
-            return constraints + NSLayoutConstraint.constraintsWithVisualFormat(format, options: [], metrics: nil, views: views)
-            } + [
-                NSLayoutConstraint(item: textLabel, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1.0, constant: 0.0),
-                NSLayoutConstraint(item: textLabel, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1.0, constant: 0.0)
-        ]
-        addConstraints(constraints)
         
         layer.addSublayer(layerSeparator)
         layer.addSublayer(layerLoader)
     }
+
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     public override func layoutSubviews() {
         super.layoutSubviews()
+        
+        textLabel.center = CGPointMake(frame.width * 0.5, frame.height * 0.5 - 6)
         
         let bezierPathLoader = UIBezierPath()
         bezierPathLoader.moveToPoint(CGPoint(x: 0.0, y: frame.height - layerLoader.lineWidth))
@@ -82,10 +67,8 @@ public class LineRefreshView: RefreshView {
         layerSeparator.path = bezierPathSeparator.CGPath
     }
     
-    // MARK: - PullToRefreshView methods
-    public override func stateChanged(previousState: RefreshState) {
-        super.stateChanged(previousState)
-        switch previousState {
+    public func pullToRefresh(view: RefreshObserverView, stateDidChange state: PullToRefreshViewState) {
+        switch state {
         case .Pulling:
             textLabel.text = pullToRefreshText
         case .ReadyToRelease:
@@ -93,12 +76,9 @@ public class LineRefreshView: RefreshView {
         case .Refreshing:
             textLabel.text = loadingText
         }
-        
-//        labelTitle.layoutIfNeeded()
     }
     
-    public override func startAnimating() {
-        super.startAnimating()
+    public func pullToRefreshAnimationDidStart(view: RefreshObserverView) {
         let pathAnimationEnd = CABasicAnimation(keyPath: "strokeEnd")
         pathAnimationEnd.duration = 0.5
         pathAnimationEnd.repeatCount = 100
@@ -116,13 +96,12 @@ public class LineRefreshView: RefreshView {
         layerLoader.addAnimation(pathAnimationStart, forKey: "strokeStartAnimation")
     }
     
-    public override func progressAnimating(factor: CGFloat) {
-        super.progressAnimating(factor)
-        layerLoader.strokeEnd = factor
+    public func pullToRefresh(view: RefreshObserverView, progressDidChange progress: CGFloat) {
+        layerLoader.strokeEnd = progress
     }
     
-    public override func stopAnimating() {
-        super.stopAnimating()
+    public func pullToRefreshAnimationDidEnd(view: RefreshObserverView) {
+        layerLoader.strokeEnd = 0
         layerLoader.removeAllAnimations()
     }
 }
