@@ -19,6 +19,7 @@ public enum PullToRefreshViewState {
     case Refreshing
     case Pulling
     case ReadyToRelease
+    case Done
 }
 
 public protocol PullToRefreshViewDelegate {
@@ -79,21 +80,10 @@ public extension UIScrollView {
         self.refreshView = refreshOberver
         addSubview(refreshOberver)
     }
-
-//    public func addPullDownRefresher<T: UIView where T: RefreshViewDelegate>(refreshView: T, action: RefreshAction) {
-//        self.refreshView = refreshView
-//        addSubview(refreshView)
-//        refreshView.action = action
-//    }
-//    
-//    public func addPullUpRefresher(refreshView: RefreshView, action: RefreshAction) {
-//        self.pullUpRefreshView = refreshView
-//        addSubview(refreshView)
-//        refreshView.pullUpAction = action
-//    }
     
-    // MARK:
-    
+    /**
+     You should stop the refresh manually.
+     */
     public func stopRefresh() {
         refreshView?.stopAnimating()
     }

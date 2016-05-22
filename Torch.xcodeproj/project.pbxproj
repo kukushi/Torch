@@ -18,8 +18,10 @@
 		523C8D381AC960630068E3C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 523C8D371AC960630068E3C7 /* Images.xcassets */; };
 		523C8D3B1AC960630068E3C7 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 523C8D391AC960630068E3C7 /* LaunchScreen.xib */; };
 		523C8D471AC960630068E3C7 /* TorchExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523C8D461AC960630068E3C7 /* TorchExampleTests.swift */; };
+		870490111CF1E572002D40CE /* Torch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 523C8CD61AC953610068E3C7 /* Torch.framework */; };
+		870490121CF1E573002D40CE /* Torch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 523C8CD61AC953610068E3C7 /* Torch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		87B238441C9D8C150063FB44 /* RefreshObserverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B238431C9D8C150063FB44 /* RefreshObserverView.swift */; };
-		87B238461C9D8F650063FB44 /* SimpleRefreshView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B238451C9D8F650063FB44 /* SimpleRefreshView.swift */; };
+		87B238461C9D8F650063FB44 /* PlainRefreshView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B238451C9D8F650063FB44 /* PlainRefreshView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,7 +39,28 @@
 			remoteGlobalIDString = 523C8D291AC960630068E3C7;
 			remoteInfo = TorchExample;
 		};
+		870490131CF1E573002D40CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 523C8CCD1AC953610068E3C7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 523C8CD51AC953610068E3C7;
+			remoteInfo = Torch;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		870490151CF1E573002D40CE /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				870490121CF1E573002D40CE /* Torch.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		523C8CD61AC953610068E3C7 /* Torch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Torch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -59,7 +82,7 @@
 		523C8D451AC960630068E3C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		523C8D461AC960630068E3C7 /* TorchExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorchExampleTests.swift; sourceTree = "<group>"; };
 		87B238431C9D8C150063FB44 /* RefreshObserverView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshObserverView.swift; sourceTree = "<group>"; };
-		87B238451C9D8F650063FB44 /* SimpleRefreshView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleRefreshView.swift; sourceTree = "<group>"; };
+		87B238451C9D8F650063FB44 /* PlainRefreshView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlainRefreshView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +105,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				870490111CF1E572002D40CE /* Torch.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,7 +147,7 @@
 				523C8CDB1AC953610068E3C7 /* Torch.h */,
 				87B238431C9D8C150063FB44 /* RefreshObserverView.swift */,
 				523C8CF21AC953720068E3C7 /* UIScrollView+Torch.swift */,
-				87B238451C9D8F650063FB44 /* SimpleRefreshView.swift */,
+				87B238451C9D8F650063FB44 /* PlainRefreshView.swift */,
 				523C8CD91AC953610068E3C7 /* Supporting Files */,
 			);
 			path = Torch;
@@ -250,10 +274,12 @@
 				523C8D261AC960630068E3C7 /* Sources */,
 				523C8D271AC960630068E3C7 /* Frameworks */,
 				523C8D281AC960630068E3C7 /* Resources */,
+				870490151CF1E573002D40CE /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				870490141CF1E573002D40CE /* PBXTargetDependency */,
 			);
 			name = TorchExample;
 			productName = TorchExample;
@@ -291,12 +317,14 @@
 				TargetAttributes = {
 					523C8CD51AC953610068E3C7 = {
 						CreatedOnToolsVersion = 6.3;
+						DevelopmentTeam = ATTGF74X8E;
 					};
 					523C8CE01AC953610068E3C7 = {
 						CreatedOnToolsVersion = 6.3;
 					};
 					523C8D291AC960630068E3C7 = {
 						CreatedOnToolsVersion = 6.3;
+						DevelopmentTeam = ATTGF74X8E;
 					};
 					523C8D3F1AC960630068E3C7 = {
 						CreatedOnToolsVersion = 6.3;
@@ -365,7 +393,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				523C8CF31AC953720068E3C7 /* UIScrollView+Torch.swift in Sources */,
-				87B238461C9D8F650063FB44 /* SimpleRefreshView.swift in Sources */,
+				87B238461C9D8F650063FB44 /* PlainRefreshView.swift in Sources */,
 				87B238441C9D8C150063FB44 /* RefreshObserverView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -408,6 +436,11 @@
 			isa = PBXTargetDependency;
 			target = 523C8D291AC960630068E3C7 /* TorchExample */;
 			targetProxy = 523C8D411AC960630068E3C7 /* PBXContainerItemProxy */;
+		};
+		870490141CF1E573002D40CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 523C8CD51AC953610068E3C7 /* Torch */;
+			targetProxy = 870490131CF1E573002D40CE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -523,6 +556,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -541,6 +576,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -588,6 +625,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -597,6 +637,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.kukushi.torchexample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -604,11 +645,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = TorchExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.kukushi.torchexample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

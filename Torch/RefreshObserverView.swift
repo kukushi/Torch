@@ -89,13 +89,14 @@ public class RefreshObserverView: UIView {
     }
     
     public func stopAnimating() {
-        state = .Pulling
+        state = .Done
         
-        UIView.animateWithDuration(0.4, animations: { [unowned self] () -> Void in
+        UIView.animateWithDuration(0.4, animations: { [unowned self] in
             self.scrollView.contentOffset.y = self.originalContentOffsetY
             self.scrollView.contentInset.top -= PullToRefreshViewHeight
-        })
-        
+        }) { [unowned self] _ in
+                self.state = .Done
+        }
         pullToRefreshAnimator?.pullToRefreshAnimationDidEnd(self)
     }
 }

@@ -9,51 +9,28 @@
 import UIKit
 import Torch
 
-public class XX: UIView, PullToRefreshViewDelegate {
-    
-    public func pullToRefresh(view: RefreshObserverView, stateDidChange state: PullToRefreshViewState) {
-        
-    }
-    
-    public func pullToRefreshAnimationDidStart(view: RefreshObserverView) {
-        
-    }
-    
-    public func pullToRefresh(view: RefreshObserverView, progressDidChange progress: CGFloat) {
-        
-    }
-    
-    public func pullToRefreshAnimationDidEnd(view: RefreshObserverView) {
-        
-    }
-}
-
-
 class FirstViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
-    var count = 30
+    var count = 7
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        title = "Torch"
+        
+        let width = UIScreen.mainScreen().bounds.width
+        let refreshView = PlainRefreshView(frame: CGRectMake(0, 0, width, 44))
         tableView.refreshView?.isInsetAdjusted = automaticallyAdjustsScrollViewInsets
-        tableView.addPullToRefresh { (scrollView) -> Void in
+        tableView.addPullToRefresh(refreshView, action: { (scrollView) in
             NSOperationQueue().addOperationWithBlock {
                 sleep(4)
                 NSOperationQueue.mainQueue().addOperationWithBlock {
                     scrollView.stopRefresh()
                 }
             }
-        }
+        })
     }
-    
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
-
-
 }
 
 extension FirstViewController: UITableViewDelegate, UITableViewDataSource {

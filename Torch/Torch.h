@@ -6,14 +6,10 @@
 //  Copyright (c) 2015 Xing He. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import Foundation;
 
 //! Project version number for Torch.
 FOUNDATION_EXPORT double TorchVersionNumber;
 
 //! Project version string for Torch.
 FOUNDATION_EXPORT const unsigned char TorchVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <Torch/PublicHeader.h>
-
-
