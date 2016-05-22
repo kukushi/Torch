@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.license      = "MIT"
   s.author             = { "Xing He" => "" }
   s.platform     = :ios, "8.0"
-  s.source       = { :git => "https://github.com/kukushi/Torch.git", :tag => "0.1" }
+  s.source       = { :git => "https://github.com/kukushi/Torch.git", :tag => s.version }
   s.source_files  = "Classes", "Classes/**/*.{h,m}", "Torch/*.{h,m,swift}"
   s.exclude_files = "Classes/Exclude"
 
