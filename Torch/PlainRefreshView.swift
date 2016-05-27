@@ -16,7 +16,7 @@ public class PlainRefreshView: UIView {
     
     public var lineColor: UIColor {
         set {
-            layerLoader.strokeColor = lineColor.CGColor
+            layerLoader.strokeColor = newValue.CGColor
         }
         get {
             return UIColor(CGColor: layerLoader.strokeColor!)

@@ -21,6 +21,7 @@ class FirstViewController: UIViewController {
         
         let width = UIScreen.mainScreen().bounds.width
         let refreshView = PlainRefreshView(frame: CGRectMake(0, 0, width, 44))
+        refreshView.lineColor = UIColor.redColor()
         tableView.refreshView?.isInsetAdjusted = automaticallyAdjustsScrollViewInsets
         tableView.addPullToRefresh(refreshView, action: { (scrollView) in
             NSOperationQueue().addOperationWithBlock {

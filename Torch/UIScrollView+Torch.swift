@@ -30,9 +30,6 @@ public protocol PullToRefreshViewDelegate {
 }
 
 public extension UIScrollView {
-
-    // MARK:
-
     public private(set) var refreshView: RefreshObserverView? {
         get {
             return objc_getAssociatedObject(self, &RefreshViewKey) as? RefreshObserverView
@@ -54,9 +51,11 @@ public extension UIScrollView {
         }
     }
     
-    // MARK:
-    
-    
+    /**
+     Add a pull to refresh view controller for tablview view
+     
+     - parameter action: the action performed when reshing
+     */
     public func addPullToRefresh(action: RefreshAction) {
         let refreshOberver = RefreshObserverView(frame: CGRectMake(0, -PullToRefreshViewHeight, 0, 0))
         refreshOberver.action = action
@@ -70,6 +69,12 @@ public extension UIScrollView {
         addSubview(refreshOberver)
     }
     
+    /**
+     Add a pull to refresh view with a custom view
+     
+     - parameter refreshView: the custom refresh view
+     - parameter action:      the action performed when reshing
+     */
     public func addPullToRefresh<T: UIView where T: PullToRefreshViewDelegate>(refreshView: T, action: RefreshAction) {
         let refreshOberver = RefreshObserverView(frame: CGRectMake(0, -PullToRefreshViewHeight, 0, 0))
         refreshOberver.action = action
@@ -82,12 +87,15 @@ public extension UIScrollView {
     }
     
     /**
-     You should stop the refresh manually.
+     Stop refreshing. In most cases, you should stop the refresh manually.
      */
     public func stopRefresh() {
         refreshView?.stopAnimating()
     }
     
+    /**
+     Start the refresh manually.
+     */
     public func startRefresh() {
         refreshView?.startAnimating()
     }
