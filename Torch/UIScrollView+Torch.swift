@@ -16,17 +16,17 @@ private var PullUpRefreshViewKey = "com.kukushi.PullUpRefreshViewKey"
 let PullToRefreshViewHeight = CGFloat(44)
 
 public enum PullToRefreshViewState {
-    case Refreshing
-    case Pulling
-    case ReadyToRelease
-    case Done
+    case refreshing
+    case pulling
+    case readyToRelease
+    case done
 }
 
 public protocol PullToRefreshViewDelegate {
-    func pullToRefreshAnimationDidStart(view: RefreshObserverView)
-    func pullToRefreshAnimationDidEnd(view: RefreshObserverView)
-    func pullToRefresh(view: RefreshObserverView, progressDidChange progress: CGFloat)
-    func pullToRefresh(view: RefreshObserverView, stateDidChange state: PullToRefreshViewState)
+    func pullToRefreshAnimationDidStart(_ view: RefreshObserverView)
+    func pullToRefreshAnimationDidEnd(_ view: RefreshObserverView)
+    func pullToRefresh(_ view: RefreshObserverView, progressDidChange progress: CGFloat)
+    func pullToRefresh(_ view: RefreshObserverView, stateDidChange state: PullToRefreshViewState)
 }
 
 public extension UIScrollView {
@@ -36,7 +36,7 @@ public extension UIScrollView {
         }
         
         set {
-            objc_setAssociatedObject(self, &RefreshViewKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, &RefreshViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     
@@ -47,7 +47,7 @@ public extension UIScrollView {
         
         set {
             self.pullUpRefreshView?.removeFromSuperview()
-            objc_setAssociatedObject(self, &PullUpRefreshViewKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, &PullUpRefreshViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     
@@ -56,12 +56,12 @@ public extension UIScrollView {
      
      - parameter action: the action performed when reshing
      */
-    public func addPullToRefresh(action: RefreshAction) {
-        let refreshOberver = RefreshObserverView(frame: CGRectMake(0, -PullToRefreshViewHeight, 0, 0))
+    public func addPullToRefresh(_ action: RefreshAction) {
+        let refreshOberver = RefreshObserverView(frame: CGRect(x: 0, y: -PullToRefreshViewHeight, width: 0, height: 0))
         refreshOberver.action = action
         
-        let width = UIScreen.mainScreen().bounds.width
-        let refreshView = PlainRefreshView(frame: CGRectMake(0, 0, width, PullToRefreshViewHeight))
+        let width = UIScreen.main().bounds.width
+        let refreshView = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: width, height: PullToRefreshViewHeight))
         refreshOberver.pullToRefreshAnimator = refreshView
         refreshOberver.addSubview(refreshView)
         
@@ -75,8 +75,8 @@ public extension UIScrollView {
      - parameter refreshView: the custom refresh view
      - parameter action:      the action performed when reshing
      */
-    public func addPullToRefresh<T: UIView where T: PullToRefreshViewDelegate>(refreshView: T, action: RefreshAction) {
-        let refreshOberver = RefreshObserverView(frame: CGRectMake(0, -PullToRefreshViewHeight, 0, 0))
+    public func addPullToRefresh<T: UIView where T: PullToRefreshViewDelegate>(_ refreshView: T, action: RefreshAction) {
+        let refreshOberver = RefreshObserverView(frame: CGRect(x: 0, y: -PullToRefreshViewHeight, width: 0, height: 0))
         refreshOberver.action = action
         
         refreshOberver.pullToRefreshAnimator = refreshView

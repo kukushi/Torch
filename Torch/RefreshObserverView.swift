@@ -20,7 +20,7 @@ public class RefreshObserverView: UIView {
     
     var pullToRefreshAnimator: PullToRefreshViewDelegate?
     
-    public private(set) var state: PullToRefreshViewState = .Pulling {
+    public private(set) var state: PullToRefreshViewState = .pulling {
         didSet {
             stateChanged(state)
         }
@@ -36,22 +36,22 @@ public class RefreshObserverView: UIView {
     
     override public func didMoveToSuperview() {
         if scrollView != nil {
-            scrollView.addObserver(self, forKeyPath: "contentOffset", options: .New, context: nil)
+            scrollView.addObserver(self, forKeyPath: "contentOffset", options: .new, context: nil)
             originalInsetTop = scrollView.contentInset.top +  (isInsetAdjusted ? 64 : 0)
             originalContentOffsetY = scrollView.contentOffset.y - (isInsetAdjusted ? 64 : 0)
         }
     }
     
-    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override public func observeValue(forKeyPath keyPath: String?, of object: AnyObject?, change: [NSKeyValueChangeKey : AnyObject]?, context: UnsafeMutablePointer<Void>?) {
         if keyPath == "contentOffset" {
             let viewHeight = PullToRefreshViewHeight
             let offset = scrollView.contentOffset.y + originalInsetTop
 
-            if state != .Refreshing  {
+            if state != .refreshing  {
                 if offset > scrollView.contentSize.height - scrollView.frame.height && !triggered {
                     triggered = true
                 }
-                else if scrollView.dragging && offset != 0 {
+                else if scrollView.isDragging && offset != 0 {
                     let process = -offset / viewHeight
                     progressAnimating(process)
                 }
@@ -65,19 +65,19 @@ public class RefreshObserverView: UIView {
         }
     }
     
-    func stateChanged(state: PullToRefreshViewState) {
+    func stateChanged(_ state: PullToRefreshViewState) {
         pullToRefreshAnimator?.pullToRefresh(self, stateDidChange: state)
     }
     
-    func progressAnimating(process: CGFloat) {
-        state = process < 1 ? .Pulling : .ReadyToRelease
+    func progressAnimating(_ process: CGFloat) {
+        state = process < 1 ? .pulling : .readyToRelease
         pullToRefreshAnimator?.pullToRefresh(self, progressDidChange: process)
     }
     
     func startAnimating() {
-        state = .Refreshing
+        state = .refreshing
         
-        UIView.animateWithDuration(0.4, animations: { [unowned self]() -> Void in
+        UIView.animate(withDuration: 0.4, animations: { [unowned self]() -> Void in
             self.scrollView.contentOffset.y = 0
             self.scrollView.contentInset.top += PullToRefreshViewHeight
             
@@ -89,13 +89,13 @@ public class RefreshObserverView: UIView {
     }
     
     public func stopAnimating() {
-        state = .Done
+        state = .done
         
-        UIView.animateWithDuration(0.4, animations: { [unowned self] in
+        UIView.animate(withDuration: 0.4, animations: { [unowned self] in
             self.scrollView.contentOffset.y = self.originalContentOffsetY
             self.scrollView.contentInset.top -= PullToRefreshViewHeight
         }) { [unowned self] _ in
-                self.state = .Done
+                self.state = .done
         }
         pullToRefreshAnimator?.pullToRefreshAnimationDidEnd(self)
     }
