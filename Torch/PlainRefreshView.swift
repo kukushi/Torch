@@ -41,13 +41,6 @@ public class PlainRefreshView: UIView {
         return layer
     }()
     
-    private let layerSeparator: CAShapeLayer = {
-        let layer = CAShapeLayer()
-        layer.strokeColor = UIColor.lightGrayColor().CGColor
-        layer.lineWidth = 1.0 / UIScreen.mainScreen().scale
-        return layer
-    }()
-    
     // MARK: Initalization
     
     override public init(frame: CGRect) {
@@ -64,8 +57,7 @@ public class PlainRefreshView: UIView {
     
     private func initalize() {
         addSubview(textLabel)
-        
-        layer.addSublayer(layerSeparator)
+
         layer.addSublayer(layerLoader)
     }
     
@@ -80,11 +72,6 @@ public class PlainRefreshView: UIView {
         bezierPathLoader.moveToPoint(CGPoint(x: 0.0, y: frame.height - layerLoader.lineWidth))
         bezierPathLoader.addLineToPoint(CGPoint(x: frame.width, y: frame.height - layerLoader.lineWidth))
         layerLoader.path = bezierPathLoader.CGPath
-        
-        let bezierPathSeparator = UIBezierPath()
-        bezierPathSeparator.moveToPoint(CGPoint(x: 0.0, y: frame.height - layerSeparator.lineWidth))
-        bezierPathSeparator.addLineToPoint(CGPoint(x: frame.width, y: frame.height - layerSeparator.lineWidth))
-        layerSeparator.path = bezierPathSeparator.CGPath
     }
 }
 

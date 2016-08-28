@@ -20,9 +20,9 @@ public class RefreshObserverView: UIView {
     
     var pullToRefreshAnimator: PullToRefreshViewDelegate?
     
-    public private(set) var state: PullToRefreshViewState = .Pulling {
+    public private(set) var state: PullToRefreshViewState = .Done {
         didSet {
-            stateChanged(state)
+            stateChanged(from: oldValue, to: state)
         }
     }
     
@@ -60,12 +60,14 @@ public class RefreshObserverView: UIView {
                 }
                 else if offset <= scrollView.contentSize.height - scrollView.frame.height && triggered {
                     triggered = false
+                } else if !scrollView.dragging && offset == 0 {
+                    state = .Done
                 }
             }
         }
     }
     
-    func stateChanged(state: PullToRefreshViewState) {
+    func stateChanged(from oldState: PullToRefreshViewState, to state: PullToRefreshViewState) {
         pullToRefreshAnimator?.pullToRefresh(self, stateDidChange: state)
     }
     
@@ -84,7 +86,7 @@ public class RefreshObserverView: UIView {
             }) { (finished) -> Void in
                 self.action?(scrollView: self.scrollView)
         }
-        
+
         pullToRefreshAnimator?.pullToRefreshAnimationDidStart(self)
     }
     
@@ -97,6 +99,7 @@ public class RefreshObserverView: UIView {
         }) { [unowned self] _ in
                 self.state = .Done
         }
+
         pullToRefreshAnimator?.pullToRefreshAnimationDidEnd(self)
     }
 }
