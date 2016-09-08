@@ -8,7 +8,7 @@
 
 import UIKit
 
-public typealias RefreshAction = (scrollView: UIScrollView) -> Void
+public typealias RefreshAction = (_ scrollView: UIScrollView) -> Void
 
 private var RefreshViewKey = "com.kukushi.RefreshViewKey"
 private var PullUpRefreshViewKey = "com.kukushi.PullUpRefreshViewKey"
@@ -30,7 +30,7 @@ public protocol PullToRefreshViewDelegate {
 }
 
 public extension UIScrollView {
-    public private(set) var refreshView: RefreshObserverView? {
+    public fileprivate(set) var refreshView: RefreshObserverView? {
         get {
             return objc_getAssociatedObject(self, &RefreshViewKey) as? RefreshObserverView
         }
@@ -40,7 +40,7 @@ public extension UIScrollView {
         }
     }
     
-    public private(set) var pullUpRefreshView: RefreshObserverView? {
+    public fileprivate(set) var pullUpRefreshView: RefreshObserverView? {
         get {
             return objc_getAssociatedObject(self, &PullUpRefreshViewKey) as? RefreshObserverView
         }
@@ -56,11 +56,11 @@ public extension UIScrollView {
      
      - parameter action: the action performed when reshing
      */
-    public func addPullToRefresh(_ action: RefreshAction) {
+    public func addPullToRefresh(_ action: @escaping RefreshAction) {
         let refreshOberver = RefreshObserverView(frame: CGRect(x: 0, y: -PullToRefreshViewHeight, width: 0, height: 0))
         refreshOberver.action = action
         
-        let width = UIScreen.main().bounds.width
+        let width = UIScreen.main.bounds.width
         let refreshView = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: width, height: PullToRefreshViewHeight))
         refreshOberver.pullToRefreshAnimator = refreshView
         refreshOberver.addSubview(refreshView)
@@ -75,7 +75,7 @@ public extension UIScrollView {
      - parameter refreshView: the custom refresh view
      - parameter action:      the action performed when reshing
      */
-    public func addPullToRefresh<T: UIView where T: PullToRefreshViewDelegate>(_ refreshView: T, action: RefreshAction) {
+    public func addPullToRefresh<T: UIView>(_ refreshView: T, action: @escaping RefreshAction) where T: PullToRefreshViewDelegate {
         let refreshOberver = RefreshObserverView(frame: CGRect(x: 0, y: -PullToRefreshViewHeight, width: 0, height: 0))
         refreshOberver.action = action
         

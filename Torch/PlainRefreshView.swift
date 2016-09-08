@@ -8,13 +8,13 @@
 
 import UIKit
 
-public class PlainRefreshView: UIView {
+open class PlainRefreshView: UIView {
     
-    public var pullToRefreshText = NSLocalizedString("Pull to refresh", comment: "Refresher")
-    public var loadingText = NSLocalizedString("Loading ...", comment: "Refresher")
-    public var releaseToRefreshText = NSLocalizedString("Release to refresh", comment: "Refresher")
+    open var pullToRefreshText = NSLocalizedString("Pull to refresh", comment: "Refresher")
+    open var loadingText = NSLocalizedString("Loading ...", comment: "Refresher")
+    open var releaseToRefreshText = NSLocalizedString("Release to refresh", comment: "Refresher")
     
-    public var lineColor: UIColor {
+    open var lineColor: UIColor {
         set {
             layerLoader.strokeColor = newValue.cgColor
         }
@@ -23,28 +23,28 @@ public class PlainRefreshView: UIView {
         }
     }
     
-    public let textLabel: UILabel = {
+    open let textLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = UIColor.gray()
+        label.textColor = UIColor.gray
         return label
     }()
     
-    private let layerLoader: CAShapeLayer = {
+    fileprivate let layerLoader: CAShapeLayer = {
         let layer = CAShapeLayer()
-        layer.strokeColor = UIColor.blue().cgColor
+        layer.strokeColor = UIColor.blue.cgColor
         layer.lineWidth = 4.0
         layer.strokeEnd = 0.0
         layer.lineCap = kCALineCapRound
         return layer
     }()
     
-    private let layerSeparator: CAShapeLayer = {
+    fileprivate let layerSeparator: CAShapeLayer = {
         let layer = CAShapeLayer()
-        layer.strokeColor = UIColor.lightGray().cgColor
-        layer.lineWidth = 1.0 / UIScreen.main().scale
+        layer.strokeColor = UIColor.lightGray.cgColor
+        layer.lineWidth = 1.0 / UIScreen.main.scale
         return layer
     }()
     
@@ -62,7 +62,7 @@ public class PlainRefreshView: UIView {
         initalize()
     }
     
-    private func initalize() {
+    fileprivate func initalize() {
         addSubview(textLabel)
         
         layer.addSublayer(layerSeparator)
@@ -71,7 +71,7 @@ public class PlainRefreshView: UIView {
     
     // MARK:
     
-    public override func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         
         textLabel.center = CGPoint(x: frame.width * 0.5, y: frame.height * 0.5 - 6)

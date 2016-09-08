@@ -8,19 +8,19 @@
 
 import UIKit
 
-public class RefreshObserverView: UIView {
+open class RefreshObserverView: UIView {
     var action: RefreshAction?
     
-    public var isInsetAdjusted = false
+    open var isInsetAdjusted = false
     
-    private var originalInsetTop: CGFloat = 0
-    private var originalContentOffsetY: CGFloat = 0
+    fileprivate var originalInsetTop: CGFloat = 0
+    fileprivate var originalContentOffsetY: CGFloat = 0
 
-    private var triggered = false
+    fileprivate var triggered = false
     
     var pullToRefreshAnimator: PullToRefreshViewDelegate?
     
-    public private(set) var state: PullToRefreshViewState = .pulling {
+    open fileprivate(set) var state: PullToRefreshViewState = .pulling {
         didSet {
             stateChanged(state)
         }
@@ -34,7 +34,7 @@ public class RefreshObserverView: UIView {
         scrollView.removeObserver(self, forKeyPath: "contentOffset")
     }
     
-    override public func didMoveToSuperview() {
+    override open func didMoveToSuperview() {
         if scrollView != nil {
             scrollView.addObserver(self, forKeyPath: "contentOffset", options: .new, context: nil)
             originalInsetTop = scrollView.contentInset.top +  (isInsetAdjusted ? 64 : 0)
@@ -42,7 +42,7 @@ public class RefreshObserverView: UIView {
         }
     }
     
-    override public func observeValue(forKeyPath keyPath: String?, of object: AnyObject?, change: [NSKeyValueChangeKey : AnyObject]?, context: UnsafeMutablePointer<Void>?) {
+    open func observeValue(forKeyPath keyPath: String?, of object: AnyObject?, change: [NSKeyValueChangeKey : AnyObject]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "contentOffset" {
             let viewHeight = PullToRefreshViewHeight
             let offset = scrollView.contentOffset.y + originalInsetTop
@@ -82,13 +82,13 @@ public class RefreshObserverView: UIView {
             self.scrollView.contentInset.top += PullToRefreshViewHeight
             
             }) { (finished) -> Void in
-                self.action?(scrollView: self.scrollView)
+                self.action?(self.scrollView)
         }
         
         pullToRefreshAnimator?.pullToRefreshAnimationDidStart(self)
     }
     
-    public func stopAnimating() {
+    open func stopAnimating() {
         state = .done
         
         UIView.animate(withDuration: 0.4, animations: { [unowned self] in
