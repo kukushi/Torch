@@ -8,39 +8,39 @@
 
 import UIKit
 
-public class PlainRefreshView: UIView {
+open class PlainRefreshView: UIView {
     
-    public var pullToRefreshText = NSLocalizedString("Pull to refresh", comment: "Refresher")
-    public var loadingText = NSLocalizedString("Loading ...", comment: "Refresher")
-    public var releaseToRefreshText = NSLocalizedString("Release to refresh", comment: "Refresher")
+    open var pullToRefreshText = NSLocalizedString("Pull to refresh", comment: "Refresher")
+    open var loadingText = NSLocalizedString("Loading ...", comment: "Refresher")
+    open var releaseToRefreshText = NSLocalizedString("Release to refresh", comment: "Refresher")
     
-    public var lineColor: UIColor {
+    open var lineColor: UIColor {
         set {
-            layerLoader.strokeColor = newValue.CGColor
+            layerLoader.strokeColor = newValue.cgColor
         }
         get {
-            return UIColor(CGColor: layerLoader.strokeColor!)
+            return UIColor(cgColor: layerLoader.strokeColor!)
         }
     }
     
-    public let textLabel: UILabel = {
+    open let textLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textAlignment = .Center
-        label.font = UIFont.systemFontOfSize(14)
-        label.textColor = UIColor.grayColor()
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = UIColor.gray
         return label
     }()
     
-    private let layerLoader: CAShapeLayer = {
+    fileprivate let layerLoader: CAShapeLayer = {
         let layer = CAShapeLayer()
-        layer.strokeColor = UIColor.blueColor().CGColor
+        layer.strokeColor = UIColor.blue.cgColor
         layer.lineWidth = 4.0
         layer.strokeEnd = 0.0
         layer.lineCap = kCALineCapRound
         return layer
     }()
-    
+
     // MARK: Initalization
     
     override public init(frame: CGRect) {
@@ -55,7 +55,7 @@ public class PlainRefreshView: UIView {
         initalize()
     }
     
-    private func initalize() {
+    fileprivate func initalize() {
         addSubview(textLabel)
 
         layer.addSublayer(layerLoader)
@@ -63,40 +63,40 @@ public class PlainRefreshView: UIView {
     
     // MARK:
     
-    public override func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         
-        textLabel.center = CGPointMake(frame.width * 0.5, frame.height * 0.5 - 6)
+        textLabel.center = CGPoint(x: frame.width * 0.5, y: frame.height * 0.5 - 6)
         
         let bezierPathLoader = UIBezierPath()
-        bezierPathLoader.moveToPoint(CGPoint(x: 0.0, y: frame.height - layerLoader.lineWidth))
-        bezierPathLoader.addLineToPoint(CGPoint(x: frame.width, y: frame.height - layerLoader.lineWidth))
-        layerLoader.path = bezierPathLoader.CGPath
+        bezierPathLoader.move(to: CGPoint(x: 0.0, y: frame.height - layerLoader.lineWidth))
+        bezierPathLoader.addLine(to: CGPoint(x: frame.width, y: frame.height - layerLoader.lineWidth))
+        layerLoader.path = bezierPathLoader.cgPath
     }
 }
 
 extension PlainRefreshView: PullToRefreshViewDelegate {
-    public func pullToRefresh(view: RefreshObserverView, stateDidChange state: PullToRefreshViewState) {
+    public func pullToRefresh(_ view: RefreshObserverView, stateDidChange state: PullToRefreshViewState) {
         switch state {
-        case .Pulling:
+        case .pulling:
             textLabel.text = pullToRefreshText
-        case .ReadyToRelease:
+        case .readyToRelease:
             textLabel.text = releaseToRefreshText
-        case .Refreshing:
+        case .refreshing:
             textLabel.text = loadingText
-        case .Done:
+        case .done:
             textLabel.text = ""
         }
     }
     
-    public func pullToRefreshAnimationDidStart(view: RefreshObserverView) {
+    public func pullToRefreshAnimationDidStart(_ view: RefreshObserverView) {
         let pathAnimationEnd = CABasicAnimation(keyPath: "strokeEnd")
         pathAnimationEnd.duration = 0.5
         pathAnimationEnd.repeatCount = 100
         pathAnimationEnd.autoreverses = true
         pathAnimationEnd.fromValue = 0.2
         pathAnimationEnd.toValue = 1.0
-        layerLoader.addAnimation(pathAnimationEnd, forKey: "strokeEndAnimation")
+        layerLoader.add(pathAnimationEnd, forKey: "strokeEndAnimation")
         
         let pathAnimationStart = CABasicAnimation(keyPath: "strokeStart")
         pathAnimationStart.duration = 0.5
@@ -104,14 +104,14 @@ extension PlainRefreshView: PullToRefreshViewDelegate {
         pathAnimationStart.autoreverses = true
         pathAnimationStart.fromValue = 0.0
         pathAnimationStart.toValue = 0.8
-        layerLoader.addAnimation(pathAnimationStart, forKey: "strokeStartAnimation")
+        layerLoader.add(pathAnimationStart, forKey: "strokeStartAnimation")
     }
     
-    public func pullToRefresh(view: RefreshObserverView, progressDidChange progress: CGFloat) {
+    public func pullToRefresh(_ view: RefreshObserverView, progressDidChange progress: CGFloat) {
         layerLoader.strokeEnd = progress
     }
     
-    public func pullToRefreshAnimationDidEnd(view: RefreshObserverView) {
+    public func pullToRefreshAnimationDidEnd(_ view: RefreshObserverView) {
         layerLoader.strokeEnd = 0
         layerLoader.removeAllAnimations()
     }
