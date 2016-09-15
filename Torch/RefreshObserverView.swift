@@ -42,11 +42,11 @@ open class RefreshObserverView: UIView {
         }
     }
     
-    open func observeValue(forKeyPath keyPath: String?, of object: AnyObject?, change: [NSKeyValueChangeKey : AnyObject]?, context: UnsafeMutableRawPointer?) {
+    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "contentOffset" {
             let viewHeight = PullToRefreshViewHeight
             let offset = scrollView.contentOffset.y + originalInsetTop
-
+            
             if state != .refreshing  {
                 if offset > scrollView.contentSize.height - scrollView.frame.height && !triggered {
                     triggered = true
@@ -66,7 +66,7 @@ open class RefreshObserverView: UIView {
             }
         }
     }
-
+    
     func stateChanged(from oldState: PullToRefreshViewState, to state: PullToRefreshViewState) {
         pullToRefreshAnimator?.pullToRefresh(self, stateDidChange: state)
     }
