@@ -19,14 +19,14 @@ class FirstViewController: UIViewController {
         
         title = "Torch"
         
-        let width = UIScreen.mainScreen().bounds.width
-        let refreshView = PlainRefreshView(frame: CGRectMake(0, 0, width, 44))
-        refreshView.lineColor = UIColor.redColor()
+        let width = UIScreen.main.bounds.width
+        let refreshView = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: width, height: 44))
+        refreshView.lineColor = UIColor.red
         tableView.refreshView?.isInsetAdjusted = automaticallyAdjustsScrollViewInsets
         tableView.addPullToRefresh(refreshView, action: { (scrollView) in
-            NSOperationQueue().addOperationWithBlock {
+            OperationQueue().addOperation {
                 sleep(4)
-                NSOperationQueue.mainQueue().addOperationWithBlock {
+                OperationQueue.main.addOperation {
                     scrollView.stopRefresh()
                 }
             }
@@ -35,13 +35,13 @@ class FirstViewController: UIViewController {
 }
 
 extension FirstViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell")!
-        cell.textLabel?.text = "\(indexPath.row)"
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
+        cell.textLabel?.text = "\((indexPath as NSIndexPath).row)"
         return cell
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return count
     }
 }
