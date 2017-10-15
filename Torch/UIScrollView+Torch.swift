@@ -52,9 +52,9 @@ public extension UIScrollView {
     }
     
     /**
-     Add a pull to refresh view controller for tablview view
+     Add a standard pull-to-refresh view to scroll view
      
-     - parameter action: the action performed when reshing
+     - parameter action: the action performed when refreshing
      */
     public func addPullToRefresh(_ action: @escaping RefreshAction) {
         let refreshOberver = RefreshObserverView(frame: CGRect(x: 0, y: -PullToRefreshViewHeight, width: 0, height: 0))
@@ -70,7 +70,7 @@ public extension UIScrollView {
     }
     
     /**
-     Add a pull to refresh view with a custom view
+     Add a custom pull-to-refresh view to scroll view
      
      - parameter refreshView: the custom refresh view
      - parameter action:      the action performed when reshing
