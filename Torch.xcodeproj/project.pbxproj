@@ -145,8 +145,8 @@
 			isa = PBXGroup;
 			children = (
 				523C8CDB1AC953610068E3C7 /* Torch.h */,
-				87B238431C9D8C150063FB44 /* RefreshObserverView.swift */,
 				523C8CF21AC953720068E3C7 /* UIScrollView+Torch.swift */,
+				87B238431C9D8C150063FB44 /* RefreshObserverView.swift */,
 				87B238451C9D8F650063FB44 /* PlainRefreshView.swift */,
 				523C8CD91AC953610068E3C7 /* Supporting Files */,
 			);
@@ -588,6 +588,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "-DDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.kukushi.torch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -611,6 +612,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.kukushi.torch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

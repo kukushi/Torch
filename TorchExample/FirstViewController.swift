@@ -18,11 +18,13 @@ class FirstViewController: UIViewController {
         super.viewDidLoad()
         
         title = "Torch"
-        
+    }
+
+    private func addPullToRefresher() {
         let width = UIScreen.main.bounds.width
         let refreshView = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: width, height: 44))
         refreshView.lineColor = UIColor.red
-        tableView.refreshView?.isInsetAdjusted = automaticallyAdjustsScrollViewInsets
+
         tableView.addPullToRefresh(refreshView, action: { (scrollView) in
             OperationQueue().addOperation {
                 sleep(4)
@@ -31,6 +33,12 @@ class FirstViewController: UIViewController {
                 }
             }
         })
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        addPullToRefresher()
     }
 }
 

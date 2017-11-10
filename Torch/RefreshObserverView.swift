@@ -8,26 +8,41 @@
 
 import UIKit
 
+private var contentOffsetKVOContext = 0
+
 open class RefreshObserverView: UIView {
     var action: RefreshAction?
-    
-    open var isInsetAdjusted = false
-    
-    fileprivate var originalInsetTop: CGFloat = 0
-    fileprivate var originalContentOffsetY: CGFloat = 0
 
-    fileprivate var triggered = false
+    private var refreshViewHeight: CGFloat {
+        return -frame.origin.y
+    }
+
+    private var originalContentOffsetY: CGFloat = 0
     
     var pullToRefreshAnimator: PullToRefreshViewDelegate?
     
-    open fileprivate(set) var state: PullToRefreshViewState = .pulling {
+    open private(set) var state: PullToRefreshViewState = .done {
         didSet {
+            guard oldValue != state else {
+                return
+            }
+            #if DEBUG
+                print("Refresher: Change to state: \(state)")
+            #endif
             stateChanged(from: oldValue, to: state)
         }
     }
+
+    private var contentInsetTop: CGFloat {
+        if #available(iOS 11.0, *) {
+            return scrollView.adjustedContentInset.top
+        } else {
+            return scrollView.contentInset.top
+        }
+    }
     
-    var scrollView: UIScrollView! {
-        return superview as? UIScrollView
+    var scrollView: UIScrollView {
+        return superview as! UIScrollView
     }
     
     deinit {
@@ -35,34 +50,29 @@ open class RefreshObserverView: UIView {
     }
     
     override open func didMoveToSuperview() {
-        if scrollView != nil {
-            scrollView.addObserver(self, forKeyPath: "contentOffset", options: .new, context: nil)
-            originalInsetTop = scrollView.contentInset.top +  (isInsetAdjusted ? 64 : 0)
-            originalContentOffsetY = scrollView.contentOffset.y - (isInsetAdjusted ? 64 : 0)
+        guard superview is UIScrollView else {
+            fatalError("Refreher can only be used in UIScrollView and it's subclasses.")
         }
+
+        scrollView.addObserver(self, forKeyPath: "contentOffset", options: .new, context: &contentOffsetKVOContext)
+        originalContentOffsetY = scrollView.contentOffset.y
     }
     
     open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "contentOffset" {
-            let viewHeight = PullToRefreshViewHeight
-            let offset = scrollView.contentOffset.y + originalInsetTop
-            
-            if state != .refreshing  {
-                if offset > scrollView.contentSize.height - scrollView.frame.height && !triggered {
-                    triggered = true
-                }
-                else if scrollView.isDragging && offset != 0 {
-                    let process = -offset / viewHeight
-                    progressAnimating(process)
-                }
-                else if viewHeight != 0 && offset < -viewHeight {
-                    startAnimating()
-                }
-                else if offset <= scrollView.contentSize.height - scrollView.frame.height && triggered {
-                    triggered = false
-                } else if !scrollView.isDragging && offset == 0 {
-                    state = .done
-                }
+        guard context == &contentOffsetKVOContext else {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+            return
+        }
+
+        let viewHeight = refreshViewHeight
+        let offset = scrollView.contentOffset.y + contentInsetTop
+
+        if state != .refreshing  {
+            if offset < -viewHeight && !scrollView.isDragging {
+                startAnimating()
+            } else if offset < 0 {
+                let process = -offset / viewHeight
+                progressAnimating(process)
             }
         }
     }
@@ -81,7 +91,7 @@ open class RefreshObserverView: UIView {
         
         UIView.animate(withDuration: 0.4, animations: { [unowned self]() -> Void in
             self.scrollView.contentOffset.y = 0
-            self.scrollView.contentInset.top += PullToRefreshViewHeight
+            self.scrollView.contentInset.top += self.refreshViewHeight
             
             }) { (finished) -> Void in
                 self.action?(self.scrollView)
@@ -93,11 +103,11 @@ open class RefreshObserverView: UIView {
     open func stopAnimating() {
         state = .done
         
-        UIView.animate(withDuration: 0.4, animations: { [unowned self] in
+        UIView.animate(withDuration: 0.4, animations: {
             self.scrollView.contentOffset.y = self.originalContentOffsetY
-            self.scrollView.contentInset.top -= PullToRefreshViewHeight
-        }) { [unowned self] _ in
-                self.state = .done
+            self.scrollView.contentInset.top -= self.refreshViewHeight
+        }) { _ in
+            self.state = .done
         }
 
         pullToRefreshAnimator?.pullToRefreshAnimationDidEnd(self)
