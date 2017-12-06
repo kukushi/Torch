@@ -68,11 +68,21 @@ open class RefreshObserverView: UIView {
         let offset = scrollView.contentOffset.y + contentInsetTop
 
         if state != .refreshing  {
-            if offset < -viewHeight && !scrollView.isDragging {
-                startAnimating()
-            } else if offset < 0 {
-                let process = -offset / viewHeight
-                progressAnimating(process)
+            if !scrollView.isDragging {
+                if offset <= -viewHeight {
+                    // Enough pulling, action should be triggered
+                    startAnimating()
+                } else {
+                    state = .cancel
+                    // Mark the refresh as done
+                    state = .done
+                }
+            } else {
+                if offset < 0 {
+                    // Keep pulling
+                    let process = -offset / viewHeight
+                    progressAnimating(process)
+                }
             }
         }
     }

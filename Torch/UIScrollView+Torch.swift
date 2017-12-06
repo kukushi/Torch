@@ -14,6 +14,7 @@ public enum PullToRefreshViewState {
     case pulling
     case readyToRelease
     case refreshing
+    case cancel
     case done
 }
 

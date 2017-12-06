@@ -84,6 +84,8 @@ extension PlainRefreshView: PullToRefreshViewDelegate {
             textLabel.text = releaseToRefreshText
         case .refreshing:
             textLabel.text = loadingText
+        case .cancel:
+            layerLoader.strokeEnd = 0
         case .done:
             textLabel.text = ""
         }
@@ -108,7 +110,7 @@ extension PlainRefreshView: PullToRefreshViewDelegate {
     }
     
     public func pullToRefresh(_ view: RefreshObserverView, progressDidChange progress: CGFloat) {
-        layerLoader.strokeEnd = progress
+        layerLoader.strokeEnd = min(progress, 1)
     }
     
     public func pullToRefreshAnimationDidEnd(_ view: RefreshObserverView) {
