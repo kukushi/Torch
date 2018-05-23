@@ -35,7 +35,7 @@ open class RefreshObserverView: UIView {
             stateChanged(from: oldValue, to: state)
             
             #if DEBUG
-            print("Refresher: Change to state: \(state)")
+            print("[Refresher]: Change to state: \(state)")
             #endif
         }
     }
@@ -53,10 +53,23 @@ open class RefreshObserverView: UIView {
     }
     
     deinit {
-        scrollView.removeObserver(self, forKeyPath: "contentOffset")
+        #if DEBUG
+        print("[Refresher]: deinit")
+        #endif
+        superview?.removeObserver(self, forKeyPath: "contentOffset")
+    }
+    
+    open override func willMove(toSuperview newSuperview: UIView?) {
+        if newSuperview == nil {
+            scrollView.removeObserver(self, forKeyPath: "contentOffset")
+        }
     }
     
     override open func didMoveToSuperview() {
+        if superview == nil {
+            return
+        }
+        
         guard superview is UIScrollView else {
             fatalError("Refreher can only be used in UIScrollView and it's subclasses.")
         }
@@ -98,6 +111,9 @@ open class RefreshObserverView: UIView {
             let offset = scrollView.contentOffset.y - refersherContentInset.bottom
             let contentHeight = scrollView.contentSize.height
             let containerHeight = scrollView.frame.height
+            if contentHeight < containerHeight {
+                return
+            }
             let bottfomOffset = containerHeight + offset - contentHeight
             if scrollView.isDragging {
                 if bottfomOffset > 0 && bottfomOffset < viewHeight {

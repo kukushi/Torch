@@ -322,6 +322,7 @@
 					};
 					523C8CE01AC953610068E3C7 = {
 						CreatedOnToolsVersion = 6.3;
+						DevelopmentTeam = U6N93T3598;
 						LastSwiftMigration = 0900;
 					};
 					523C8D291AC960630068E3C7 = {
@@ -629,6 +630,7 @@
 		523C8CF01AC953610068E3C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = U6N93T3598;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -648,6 +650,7 @@
 		523C8CF11AC953610068E3C7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = U6N93T3598;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
