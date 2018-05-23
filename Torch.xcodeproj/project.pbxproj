@@ -184,8 +184,8 @@
 				523C8D2E1AC960630068E3C7 /* AppDelegate.swift */,
 				523C8D301AC960630068E3C7 /* FirstViewController.swift */,
 				523C8D321AC960630068E3C7 /* SecondViewController.swift */,
-				523C8D341AC960630068E3C7 /* Main.storyboard */,
 				523C8D371AC960630068E3C7 /* Images.xcassets */,
+				523C8D341AC960630068E3C7 /* Main.storyboard */,
 				523C8D391AC960630068E3C7 /* LaunchScreen.xib */,
 				523C8D2C1AC960630068E3C7 /* Supporting Files */,
 			);

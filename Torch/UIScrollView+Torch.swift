@@ -18,38 +18,58 @@ public enum PullToRefreshViewState {
     case done
 }
 
-public protocol PullToRefreshViewDelegate {
+public enum PullDirection {
+    case down
+    case up
+}
+
+public protocol PullToRefreshViewDelegate: class {
     func pullToRefreshAnimationDidStart(_ view: RefreshObserverView)
     func pullToRefreshAnimationDidEnd(_ view: RefreshObserverView)
     func pullToRefresh(_ view: RefreshObserverView, progressDidChange progress: CGFloat)
     func pullToRefresh(_ view: RefreshObserverView, stateDidChange state: PullToRefreshViewState)
 }
 
-private var refreshViewKey = 0
+private var pullDownToRefreshViewKey = 0
+private var pullUpToRefershViewKey = 1
 
 public extension UIScrollView {
-    public private(set) var refreshView: RefreshObserverView? {
+    public private(set) var pullDownRefreshView: RefreshObserverView? {
         get {
-            return objc_getAssociatedObject(self, &refreshViewKey) as? RefreshObserverView
+            return objc_getAssociatedObject(self, &pullDownToRefreshViewKey) as? RefreshObserverView
         }
         set {
-            objc_setAssociatedObject(self, &refreshViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, &pullDownToRefreshViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
+    
+    public private(set) var pullUpRefreshView: RefreshObserverView? {
+        get {
+            return objc_getAssociatedObject(self, &pullUpToRefershViewKey) as? RefreshObserverView
+        }
+        set {
+            objc_setAssociatedObject(self, &pullUpToRefershViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
+    // MARK: Pull To Refresh
     
     /// Add a standard pull-to-refresh view to scroll view
     ///
     /// - Parameter action: the action performed when released
-    public func addPullToRefresh(_ action: @escaping RefreshAction) {
-        let width = UIScreen.main.bounds.width
-        let refreshView = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: width, height: 44))
-
-        let refreshObserver = RefreshObserverView(frame: CGRect(x: 0, y: -refreshView.frame.height, width: 0, height: 0))
+    public func addPullToRefresh(_ action: @escaping RefreshAction, direction: PullDirection = .down) {
+        let refreshView = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: bounds.width, height: 44))
+        
+        let isPullingDown = direction == .down
+        let y = isPullingDown ? -refreshView.frame.height : contentSize.height
+        let refreshObserver = RefreshObserverView(frame: CGRect(x: 0, y: y, width: 0, height: 0))
+        refreshObserver.direction = direction
         refreshObserver.action = action
         refreshObserver.pullToRefreshAnimator = refreshView
+        refreshObserver.refreshView = refreshView
         refreshObserver.addSubview(refreshView)
         
-        self.refreshView = refreshObserver
+        setRefreshView(refreshObserver, direction: direction)
         addSubview(refreshObserver)
     }
 
@@ -58,25 +78,42 @@ public extension UIScrollView {
     /// - Parameters:
     ///   - refreshView: the custom refresh view
     ///   - action: the action performed when released
-    public func addPullToRefresh<T: UIView>(_ refreshView: T, action: @escaping RefreshAction) where T: PullToRefreshViewDelegate {
-        let viewHeight = refreshView.frame.height
-        let refreshObserver = RefreshObserverView(frame: CGRect(x: 0, y: -viewHeight, width: 0, height: 0))
+    public func addPullToRefresh<T: UIView>(_ refreshView: T, direction: PullDirection = .down, action: @escaping RefreshAction) where T: PullToRefreshViewDelegate {
+        let isPullingDown = direction == .down
+        let y = isPullingDown ? -refreshView.frame.height : contentSize.height
+        let refreshObserver = RefreshObserverView(frame: CGRect(x: 0, y: y, width: 0, height: 0))
+        refreshObserver.direction = direction
         refreshObserver.action = action
-        
         refreshObserver.pullToRefreshAnimator = refreshView
+        refreshObserver.refreshView = refreshView
         refreshObserver.addSubview(refreshView)
         
-        self.refreshView = refreshObserver
+        setRefreshView(refreshObserver, direction: direction)
         addSubview(refreshObserver)
     }
 
     /// Stop refreshing. In most cases, you should stop the refresh manually.
-    public func stopRefresh() {
-        refreshView?.stopAnimating()
+    public func stopRefresh(_ direction: PullDirection = .down) {
+        refreshView(with: direction)?.stopAnimating()
     }
     
     /// Start the refresh manually.
-    public func startRefresh() {
-        refreshView?.startAnimating()
+    public func startRefresh(_ direction: PullDirection = .down) {
+        refreshView(with: direction)?.startAnimating()
     }
+    
+    // MARK: Private getter / setter
+    
+    private func refreshView(with direction: PullDirection = .down) -> RefreshObserverView? {
+        return direction == .down ? pullDownRefreshView : pullUpRefreshView
+    }
+    
+    private func setRefreshView(_ view: RefreshObserverView, direction: PullDirection = .down) {
+        if direction == .down {
+            pullDownRefreshView = view
+        } else {
+            pullUpRefreshView = view
+        }
+    }
+    
 }

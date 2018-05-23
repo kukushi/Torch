@@ -12,32 +12,39 @@ private var contentOffsetKVOContext = 0
 
 open class RefreshObserverView: UIView {
     var action: RefreshAction?
+    var direction = PullDirection.down
+    weak var refreshView: UIView?
 
     private var refreshViewHeight: CGFloat {
-        return -frame.origin.y
+        return refreshView?.frame.height ?? 0
+    }
+    
+    private var isPullingDown: Bool {
+        return direction == .down
     }
 
     private var originalContentOffsetY: CGFloat = 0
     
-    var pullToRefreshAnimator: PullToRefreshViewDelegate?
+    weak var pullToRefreshAnimator: PullToRefreshViewDelegate?
     
     open private(set) var state: PullToRefreshViewState = .done {
         didSet {
             guard oldValue != state else {
                 return
             }
-            #if DEBUG
-                print("Refresher: Change to state: \(state)")
-            #endif
             stateChanged(from: oldValue, to: state)
+            
+            #if DEBUG
+            print("Refresher: Change to state: \(state)")
+            #endif
         }
     }
-
-    private var contentInsetTop: CGFloat {
+    
+    private var refersherContentInset: UIEdgeInsets {
         if #available(iOS 11.0, *) {
-            return scrollView.adjustedContentInset.top
+            return scrollView.adjustedContentInset
         } else {
-            return scrollView.contentInset.top
+            return scrollView.contentInset
         }
     }
     
@@ -65,14 +72,17 @@ open class RefreshObserverView: UIView {
         }
 
         let viewHeight = refreshViewHeight
-        let offset = scrollView.contentOffset.y + contentInsetTop
-
-        if state != .refreshing  {
+        
+        guard state != .refreshing else { return }
+        
+        switch direction {
+        case .down:
+            let offset = scrollView.contentOffset.y + refersherContentInset.top
             if !scrollView.isDragging {
                 if offset <= -viewHeight {
                     // Enough pulling, action should be triggered
                     startAnimating()
-                } else {
+                } else if offset < 0 && state == .pulling {
                     state = .cancel
                     // Mark the refresh as done
                     state = .done
@@ -82,6 +92,25 @@ open class RefreshObserverView: UIView {
                     // Keep pulling
                     let process = -offset / viewHeight
                     progressAnimating(process)
+                }
+            }
+        case .up:
+            let offset = scrollView.contentOffset.y - refersherContentInset.bottom
+            let contentHeight = scrollView.contentSize.height
+            let containerHeight = scrollView.frame.height
+            let bottfomOffset = containerHeight + offset - contentHeight
+            if scrollView.isDragging {
+                if bottfomOffset > 0 && bottfomOffset < viewHeight {
+                    let process = bottfomOffset / viewHeight
+                    progressAnimating(process)
+                }
+            } else {
+                if bottfomOffset >= viewHeight {
+                    startAnimating()
+                } else if bottfomOffset > 0 && state == .pulling {
+                    state = .cancel
+                    // Mark the refresh as done
+                    state = .done
                 }
             }
         }
@@ -99,27 +128,37 @@ open class RefreshObserverView: UIView {
     func startAnimating() {
         state = .refreshing
         
-        UIView.animate(withDuration: 0.4, animations: { [unowned self]() -> Void in
-            self.scrollView.contentOffset.y = 0
-            self.scrollView.contentInset.top += self.refreshViewHeight
-            
-            }) { (finished) -> Void in
-                self.action?(self.scrollView)
+        UIView.animate(withDuration: 0.4, animations: { () -> Void in
+            if self.isPullingDown {
+                self.scrollView.contentInset.top += self.refreshViewHeight
+                self.scrollView.contentOffset.y = self.originalContentOffsetY - self.refreshViewHeight
+            } else {
+                self.scrollView.contentInset.bottom += self.refreshViewHeight
+                self.scrollView.contentOffset.y += self.refreshViewHeight
+            }
+        }) { (finished) -> Void in
+            self.pullToRefreshAnimator?.pullToRefreshAnimationDidStart(self)
+            self.action?(self.scrollView)
         }
-
-        pullToRefreshAnimator?.pullToRefreshAnimationDidStart(self)
     }
     
     open func stopAnimating() {
         state = .done
         
+        self.pullToRefreshAnimator?.pullToRefreshAnimationDidEnd(self)
+        
         UIView.animate(withDuration: 0.4, animations: {
-            self.scrollView.contentOffset.y = self.originalContentOffsetY
-            self.scrollView.contentInset.top -= self.refreshViewHeight
+            if self.isPullingDown {
+                self.scrollView.contentOffset.y = self.originalContentOffsetY
+                self.scrollView.contentInset.top -= self.refreshViewHeight
+            } else {
+                let contentHeight = self.scrollView.contentSize.height
+                let containerHeight = self.scrollView.frame.height
+                self.scrollView.contentInset.bottom -= self.refreshViewHeight
+                self.scrollView.contentOffset.y = contentHeight - containerHeight + self.refersherContentInset.bottom
+            }
         }) { _ in
             self.state = .done
         }
-
-        pullToRefreshAnimator?.pullToRefreshAnimationDidEnd(self)
     }
 }

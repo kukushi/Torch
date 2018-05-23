@@ -9,10 +9,19 @@
 import UIKit
 import Torch
 
+class TableView: UITableView {
+    override var contentOffset: CGPoint {
+        didSet {
+//            print("OffsetY", contentOffset.y, "InsetTop", contentInset.top)
+//            print("ViewHeight", frame.height, "ContentHeight", contentSize.height)
+        }
+    }
+}
+
 class FirstViewController: UIViewController {
-    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var tableView: TableView!
     
-    var count = 7
+    var count = 20
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,25 +29,43 @@ class FirstViewController: UIViewController {
         title = "Torch"
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        addPullToRefresher()
+        addPullUpToRefresher()
+    }
+    
     private func addPullToRefresher() {
         let width = UIScreen.main.bounds.width
         let refreshView = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: width, height: 44))
         refreshView.lineColor = UIColor.red
-
+        
         tableView.addPullToRefresh(refreshView, action: { (scrollView) in
             OperationQueue().addOperation {
-                sleep(4)
+                sleep(3)
                 OperationQueue.main.addOperation {
                     scrollView.stopRefresh()
                 }
             }
         })
     }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        addPullToRefresher()
+    
+    private func addPullUpToRefresher() {
+        let width = UIScreen.main.bounds.width
+        let refreshView = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: width, height: 44))
+        refreshView.lineColor = UIColor.red
+        
+        tableView.addPullToRefresh(refreshView, direction: .up) { (scrollView) in
+            OperationQueue().addOperation {
+//                self.count += 3
+                sleep(3)
+                OperationQueue.main.addOperation {
+                    scrollView.stopRefresh(.up)
+                    self.tableView.reloadData()
+                }
+            }
+        }
     }
 }
 
