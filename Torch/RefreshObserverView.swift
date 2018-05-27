@@ -8,7 +8,10 @@
 
 import UIKit
 
-private var contentOffsetKVOContext = 0
+private var TrochContentOffsetKVOContext = 0
+private var TorchContentSizeKVOContext = 1
+private let TorchContentOffsetKey = "contentOffset"
+private let TorchContentSizetKey = "contentSize"
 
 open class RefreshObserverView: UIView {
     var action: RefreshAction?
@@ -56,12 +59,16 @@ open class RefreshObserverView: UIView {
         #if DEBUG
         print("[Refresher]: deinit")
         #endif
-        superview?.removeObserver(self, forKeyPath: "contentOffset")
+        superview?.removeObserver(self, forKeyPath: TorchContentOffsetKey)
+        superview?.removeObserver(self, forKeyPath: TorchContentSizetKey)
     }
     
     open override func willMove(toSuperview newSuperview: UIView?) {
         if newSuperview == nil {
-            scrollView.removeObserver(self, forKeyPath: "contentOffset")
+            scrollView.removeObserver(self, forKeyPath: TorchContentOffsetKey)
+            if !isPullingDown {
+                scrollView.removeObserver(self, forKeyPath: TorchContentSizetKey)
+            }
         }
     }
     
@@ -74,16 +81,28 @@ open class RefreshObserverView: UIView {
             fatalError("Refreher can only be used in UIScrollView and it's subclasses.")
         }
 
-        scrollView.addObserver(self, forKeyPath: "contentOffset", options: .new, context: &contentOffsetKVOContext)
+        scrollView.addObserver(self, forKeyPath: TorchContentOffsetKey, options: .new, context: &TrochContentOffsetKVOContext)
         originalContentOffsetY = scrollView.contentOffset.y
+        
+        if !isPullingDown {
+            scrollView.addObserver(self, forKeyPath: TorchContentSizetKey, options: .new, context: &TorchContentSizeKVOContext)
+        }
     }
     
     open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        guard context == &contentOffsetKVOContext else {
+        switch context {
+        case &TrochContentOffsetKVOContext:
+            observingContentOffsetChanges()
+        case &TorchContentSizeKVOContext:
+            observingContentSizeChanges()
+        default:
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-            return
         }
-
+    }
+    
+    // MARK: KVO
+    
+    func observingContentOffsetChanges() {
         let viewHeight = refreshViewHeight
         
         guard state != .refreshing else { return }
@@ -131,6 +150,14 @@ open class RefreshObserverView: UIView {
             }
         }
     }
+    
+    func observingContentSizeChanges() {
+        if let origin = refreshView?.frame.origin, origin.y != scrollView.contentSize.height {
+            refreshView?.frame.origin.y = scrollView.contentSize.height
+        }
+    }
+    
+    // MARK:
     
     func stateChanged(from oldState: PullToRefreshViewState, to state: PullToRefreshViewState) {
         pullToRefreshAnimator?.pullToRefresh(self, stateDidChange: state)
