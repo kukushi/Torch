@@ -23,7 +23,7 @@ open class PlainRefreshView: UIView {
         }
     }
     
-    open let textLabel: UILabel = {
+    public let textLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
