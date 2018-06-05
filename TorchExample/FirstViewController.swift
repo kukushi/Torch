@@ -58,11 +58,11 @@ class FirstViewController: UIViewController {
         
         tableView.addPullToRefresh(refreshView, direction: .up) { (scrollView) in
             OperationQueue().addOperation {
-//                self.count += 3
+                self.count += 3
                 sleep(3)
                 OperationQueue.main.addOperation {
-                    scrollView.stopRefresh(.up)
                     self.tableView.reloadData()
+                    scrollView.stopRefresh(.up)
                 }
             }
         }

@@ -90,6 +90,7 @@ open class RefreshObserverView: UIView {
     }
     
     open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+
         switch context {
         case &TrochContentOffsetKVOContext:
             observingContentOffsetChanges()
@@ -152,8 +153,8 @@ open class RefreshObserverView: UIView {
     }
     
     func observingContentSizeChanges() {
-        if let origin = refreshView?.frame.origin, origin.y != scrollView.contentSize.height {
-            refreshView?.frame.origin.y = scrollView.contentSize.height
+        if !isPullingDown && frame.origin.y != scrollView.contentSize.height {
+            frame.origin.y = scrollView.contentSize.height
         }
     }
     
@@ -169,6 +170,8 @@ open class RefreshObserverView: UIView {
     }
     
     func startAnimating() {
+        guard state != .refreshing else { return }
+
         state = .refreshing
         
         UIView.animate(withDuration: 0.4, animations: { () -> Void in
@@ -186,19 +189,19 @@ open class RefreshObserverView: UIView {
     }
     
     open func stopAnimating() {
+        guard state != .done else { return }
+
         state = .done
         
-        self.pullToRefreshAnimator?.pullToRefreshAnimationDidEnd(self)
+        pullToRefreshAnimator?.pullToRefreshAnimationDidEnd(self)
         
         UIView.animate(withDuration: 0.4, animations: {
             if self.isPullingDown {
                 self.scrollView.contentOffset.y = self.originalContentOffsetY
                 self.scrollView.contentInset.top -= self.refreshViewHeight
             } else {
-                let contentHeight = self.scrollView.contentSize.height
-                let containerHeight = self.scrollView.frame.height
-                self.scrollView.contentInset.bottom -= self.refreshViewHeight
-                self.scrollView.contentOffset.y = contentHeight - containerHeight + self.refersherContentInset.bottom
+                self.scrollView.contentInset.bottom -= self.refreshViewHeight
+                self.scrollView.contentOffset.y -= (self.refreshViewHeight - 10)
             }
         }) { _ in
             self.state = .done
