@@ -8,7 +8,7 @@
 
 import UIKit
 
-private var TrochContentOffsetKVOContext = 0
+private var TorchContentOffsetKVOContext = 0
 private var TorchContentSizeKVOContext = 1
 private let TorchContentOffsetKey = "contentOffset"
 private let TorchContentSizetKey = "contentSize"
@@ -81,7 +81,7 @@ open class RefreshObserverView: UIView {
             fatalError("Refreher can only be used in UIScrollView and it's subclasses.")
         }
 
-        scrollView.addObserver(self, forKeyPath: TorchContentOffsetKey, options: .new, context: &TrochContentOffsetKVOContext)
+        scrollView.addObserver(self, forKeyPath: TorchContentOffsetKey, options: .new, context: &TorchContentOffsetKVOContext)
         originalContentOffsetY = scrollView.contentOffset.y
         
         if !isPullingDown {
@@ -91,12 +91,11 @@ open class RefreshObserverView: UIView {
     
     open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
 
-        switch context {
-        case &TrochContentOffsetKVOContext:
+        if context == &TorchContentOffsetKVOContext {
             observingContentOffsetChanges()
-        case &TorchContentSizeKVOContext:
+        } else if context == &TorchContentSizeKVOContext {
             observingContentSizeChanges()
-        default:
+        } else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
     }
@@ -200,7 +199,7 @@ open class RefreshObserverView: UIView {
                 self.scrollView.contentOffset.y = self.originalContentOffsetY
                 self.scrollView.contentInset.top -= self.refreshViewHeight
             } else {
-                self.scrollView.contentInset.bottom -= self.refreshViewHeight
+                self.scrollView.contentInset.bottom -= self.refreshViewHeight
                 self.scrollView.contentOffset.y -= (self.refreshViewHeight - 10)
             }
         }) { _ in
