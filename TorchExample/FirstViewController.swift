@@ -66,6 +66,7 @@ class FirstViewController: UIViewController {
                 }
             }
         }
+        tableView.pullDownRefreshView?.enableTapticFeedback = true
     }
 }
 

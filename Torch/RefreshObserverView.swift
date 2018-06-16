@@ -18,6 +18,9 @@ open class RefreshObserverView: UIView {
     var direction = PullDirection.down
     weak var refreshView: UIView?
 
+    public var enableTapticFeedback = false
+    private lazy var feedbackGenerator = RefreshFeedbackGenerator()
+    
     private var refreshViewHeight: CGFloat {
         return refreshView?.frame.height ?? 0
     }
@@ -118,11 +121,26 @@ open class RefreshObserverView: UIView {
                     state = .cancel
                     // Mark the refresh as done
                     state = .done
+                    
+                    if enableTapticFeedback {
+                        feedbackGenerator.reset()
+                    }
                 }
             } else {
                 if offset < 0 {
-                    // Keep pulling
+                    // Still pulling
                     let process = -offset / viewHeight
+                    
+                    if enableTapticFeedback {
+                        if state == .done {
+                            feedbackGenerator.prepare()
+                        }
+                        if state == .pulling && process >= 1 {
+                            feedbackGenerator.generate()
+                        }
+                    }
+                    
+                    state = process < 1 ? .pulling : .readyToRelease
                     progressAnimating(process)
                 }
             }
