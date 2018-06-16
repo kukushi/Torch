@@ -7,30 +7,36 @@
 //
 
 import UIKit
-
-class ScrollView: UIScrollView {
-    override var contentOffset: CGPoint {
-        didSet {
-            print("OffsetY", contentOffset.y, "InsetTop", contentInset.top)
-        }
-    }
-}
+import Torch
 
 class SecondViewController: UIViewController {
+    @IBOutlet weak var tableView: UITableView!
 
-    @IBOutlet weak var secondScrollView: ScrollView!
+    var count = 20
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        secondScrollView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
 
+        tableView.delegate = self
+        tableView.dataSource = self
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
 
 }
 
+extension SecondViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
+        cell.textLabel?.text = "\((indexPath as NSIndexPath).row)"
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return count
+    }
+}

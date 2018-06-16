@@ -24,10 +24,10 @@ public enum PullDirection {
 }
 
 public protocol PullToRefreshViewDelegate: class {
-    func pullToRefreshAnimationDidStart(_ view: RefreshObserverView)
-    func pullToRefreshAnimationDidEnd(_ view: RefreshObserverView)
-    func pullToRefresh(_ view: RefreshObserverView, progressDidChange progress: CGFloat)
-    func pullToRefresh(_ view: RefreshObserverView, stateDidChange state: PullToRefreshViewState)
+    func pullToRefreshAnimationDidStart(_ view: RefreshObserverView, direction: PullDirection)
+    func pullToRefreshAnimationDidEnd(_ view: RefreshObserverView, direction: PullDirection)
+    func pullToRefresh(_ view: RefreshObserverView, progressDidChange progress: CGFloat, direction: PullDirection)
+    func pullToRefresh(_ view: RefreshObserverView, stateDidChange state: PullToRefreshViewState, direction: PullDirection)
 }
 
 private var pullDownToRefreshViewKey = 0
@@ -35,13 +35,21 @@ private var pullUpToRefershViewKey = 1
 
 public extension UIScrollView {
     public private(set) var pullDownRefreshView: RefreshObserverView? {
-        get { return objc_getAssociatedObject(self, &pullDownToRefreshViewKey) as? RefreshObserverView }
-        set { objc_setAssociatedObject(self, &pullDownToRefreshViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        get {
+            return objc_getAssociatedObject(self, &pullDownToRefreshViewKey) as? RefreshObserverView
+        }
+        set {
+            objc_setAssociatedObject(self, &pullDownToRefreshViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     
     public private(set) var pullUpRefreshView: RefreshObserverView? {
-        get { return objc_getAssociatedObject(self, &pullUpToRefershViewKey) as? RefreshObserverView }
-        set { objc_setAssociatedObject(self, &pullUpToRefershViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        get {
+            return objc_getAssociatedObject(self, &pullUpToRefershViewKey) as? RefreshObserverView
+        }
+        set {
+            objc_setAssociatedObject(self, &pullUpToRefershViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     
     // MARK: Pull To Refresh
@@ -50,19 +58,8 @@ public extension UIScrollView {
     ///
     /// - Parameter action: the action performed when released
     public func addPullToRefresh(_ direction: PullDirection = .down, action: @escaping RefreshAction) {
-        let refreshView = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: bounds.width, height: 44))
-        
-        let isPullingDown = direction == .down
-        let y = isPullingDown ? -refreshView.frame.height : contentSize.height
-        let refreshObserver = RefreshObserverView(frame: CGRect(x: 0, y: y, width: 0, height: 0))
-        refreshObserver.direction = direction
-        refreshObserver.action = action
-        refreshObserver.pullToRefreshAnimator = refreshView
-        refreshObserver.refreshView = refreshView
-        refreshObserver.addSubview(refreshView)
-        
-        setRefreshView(refreshObserver, direction: direction)
-        addSubview(refreshObserver)
+        let view = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: bounds.width, height: 44))
+        addPullToRefresh(view, direction: direction, action: action)
     }
 
     /// Add a custom pull-to-refresh view to scroll view
@@ -70,15 +67,19 @@ public extension UIScrollView {
     /// - Parameters:
     ///   - refreshView: the custom refresh view
     ///   - action: the action performed when released
-    public func addPullToRefresh<T: UIView>(_ refreshView: T, direction: PullDirection = .down, action: @escaping RefreshAction) where T: PullToRefreshViewDelegate {
-        let isPullingDown = direction == .down
-        let y = isPullingDown ? -refreshView.frame.height : contentSize.height
+    public func addPullToRefresh<T: UIView>(_ view: T, direction: PullDirection = .down, action: @escaping RefreshAction) where T: PullToRefreshViewDelegate {
+        if refreshView(with: direction) != nil {
+            return
+        }
+        
+        let isPullingDown = (direction == .down)
+        let y = isPullingDown ? -view.frame.height : contentSize.height
         let refreshObserver = RefreshObserverView(frame: CGRect(x: 0, y: y, width: 0, height: 0))
         refreshObserver.direction = direction
         refreshObserver.action = action
-        refreshObserver.pullToRefreshAnimator = refreshView
-        refreshObserver.refreshView = refreshView
-        refreshObserver.addSubview(refreshView)
+        refreshObserver.pullToRefreshAnimator = view
+        refreshObserver.refreshView = view
+        refreshObserver.addSubview(view)
         
         setRefreshView(refreshObserver, direction: direction)
         addSubview(refreshObserver)
@@ -97,13 +98,19 @@ public extension UIScrollView {
     // MARK: Private getter / setter
     
     private func refreshView(with direction: PullDirection = .down) -> RefreshObserverView? {
-        return direction == .down ? pullDownRefreshView : pullUpRefreshView
+        switch direction {
+        case .down:
+            return pullDownRefreshView
+        case .up:
+            return pullUpRefreshView
+        }
     }
     
     private func setRefreshView(_ view: RefreshObserverView, direction: PullDirection = .down) {
-        if direction == .down {
+        switch direction {
+        case .down:
             pullDownRefreshView = view
-        } else {
+        case .up:
             pullUpRefreshView = view
         }
     }

@@ -160,12 +160,11 @@ open class RefreshObserverView: UIView {
     // MARK:
     
     func stateChanged(from oldState: PullToRefreshViewState, to state: PullToRefreshViewState) {
-        pullToRefreshAnimator?.pullToRefresh(self, stateDidChange: state)
+        pullToRefreshAnimator?.pullToRefresh(self, stateDidChange: state, direction: direction)
     }
     
     func progressAnimating(_ process: CGFloat) {
-        state = process < 1 ? .pulling : .readyToRelease
-        pullToRefreshAnimator?.pullToRefresh(self, progressDidChange: process)
+        pullToRefreshAnimator?.pullToRefresh(self, progressDidChange: process, direction: direction)
     }
     
     func startAnimating() {
@@ -182,17 +181,19 @@ open class RefreshObserverView: UIView {
                 self.scrollView.contentOffset.y += self.refreshViewHeight
             }
         }) { (finished) -> Void in
-            self.pullToRefreshAnimator?.pullToRefreshAnimationDidStart(self)
+            self.pullToRefreshAnimator?.pullToRefreshAnimationDidStart(self, direction: self.direction)
             self.action?(self.scrollView)
         }
     }
     
     open func stopAnimating() {
-        guard state != .done else { return }
+        guard state != .done else {
+            return
+        }
 
         state = .done
         
-        pullToRefreshAnimator?.pullToRefreshAnimationDidEnd(self)
+        pullToRefreshAnimator?.pullToRefreshAnimationDidEnd(self, direction: direction)
         
         UIView.animate(withDuration: 0.4, animations: {
             if self.isPullingDown {

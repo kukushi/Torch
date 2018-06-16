@@ -76,7 +76,7 @@ open class PlainRefreshView: UIView {
 }
 
 extension PlainRefreshView: PullToRefreshViewDelegate {
-    public func pullToRefresh(_ view: RefreshObserverView, stateDidChange state: PullToRefreshViewState) {
+    public func pullToRefresh(_ view: RefreshObserverView, stateDidChange state: PullToRefreshViewState, direction: PullDirection) {
         switch state {
         case .pulling:
             textLabel.text = pullToRefreshText
@@ -91,7 +91,7 @@ extension PlainRefreshView: PullToRefreshViewDelegate {
         }
     }
     
-    public func pullToRefreshAnimationDidStart(_ view: RefreshObserverView) {
+    public func pullToRefreshAnimationDidStart(_ view: RefreshObserverView, direction: PullDirection) {
         let pathAnimationEnd = CABasicAnimation(keyPath: "strokeEnd")
         pathAnimationEnd.duration = 0.5
         pathAnimationEnd.repeatCount = 100
@@ -109,11 +109,11 @@ extension PlainRefreshView: PullToRefreshViewDelegate {
         layerLoader.add(pathAnimationStart, forKey: "strokeStartAnimation")
     }
     
-    public func pullToRefresh(_ view: RefreshObserverView, progressDidChange progress: CGFloat) {
+    public func pullToRefresh(_ view: RefreshObserverView, progressDidChange progress: CGFloat, direction: PullDirection) {
         layerLoader.strokeEnd = min(progress, 1)
     }
     
-    public func pullToRefreshAnimationDidEnd(_ view: RefreshObserverView) {
+    public func pullToRefreshAnimationDidEnd(_ view: RefreshObserverView, direction: PullDirection) {
         layerLoader.strokeEnd = 0
         layerLoader.removeAllAnimations()
     }
