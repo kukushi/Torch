@@ -59,9 +59,6 @@ open class RefreshObserverView: UIView {
     }
     
     deinit {
-        #if DEBUG
-        print("[Refresher]: deinit")
-        #endif
         superview?.removeObserver(self, forKeyPath: TorchContentOffsetKey)
         superview?.removeObserver(self, forKeyPath: TorchContentSizetKey)
     }
@@ -91,7 +88,7 @@ open class RefreshObserverView: UIView {
             scrollView.addObserver(self, forKeyPath: TorchContentSizetKey, options: .new, context: &TorchContentSizeKVOContext)
         }
     }
-    
+
     open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
 
         if context == &TorchContentOffsetKVOContext {
@@ -108,7 +105,9 @@ open class RefreshObserverView: UIView {
     func observingContentOffsetChanges() {
         let viewHeight = refreshViewHeight
         
-        guard state != .refreshing else { return }
+        guard state != .refreshing else {
+            return
+        }
         
         switch direction {
         case .down:
@@ -145,12 +144,13 @@ open class RefreshObserverView: UIView {
                 }
             }
         case .up:
-            let offset = scrollView.contentOffset.y - refersherContentInset.bottom
             let contentHeight = scrollView.contentSize.height
             let containerHeight = scrollView.frame.height
             if contentHeight < containerHeight {
                 return
             }
+            
+            let offset = scrollView.contentOffset.y - refersherContentInset.bottom
             let bottfomOffset = containerHeight + offset - contentHeight
             if scrollView.isDragging {
                 if bottfomOffset > 0 && bottfomOffset < viewHeight {
@@ -219,7 +219,7 @@ open class RefreshObserverView: UIView {
                 self.scrollView.contentInset.top -= self.refreshViewHeight
             } else {
                 self.scrollView.contentInset.bottom -= self.refreshViewHeight
-                self.scrollView.contentOffset.y -= (self.refreshViewHeight - 10)
+                self.scrollView.contentOffset.y -= self.refreshViewHeight
             }
         }) { _ in
             self.state = .done

@@ -59,6 +59,7 @@ public extension UIScrollView {
     /// - Parameter action: the action performed when released
     public func addPullToRefresh(_ direction: PullDirection = .down, action: @escaping RefreshAction) {
         let view = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: bounds.width, height: 44))
+        view.autoresizingMask = [.flexibleWidth, .flexibleRightMargin]
         addPullToRefresh(view, direction: direction, action: action)
     }
 
@@ -74,7 +75,8 @@ public extension UIScrollView {
         
         let isPullingDown = (direction == .down)
         let y = isPullingDown ? -view.frame.height : contentSize.height
-        let refreshObserver = RefreshObserverView(frame: CGRect(x: 0, y: y, width: 0, height: 0))
+        let refreshObserver = RefreshObserverView(frame: CGRect(x: 0, y: y, width: bounds.width, height: y))
+        refreshObserver.autoresizingMask = [.flexibleWidth, .flexibleRightMargin]
         refreshObserver.direction = direction
         refreshObserver.action = action
         refreshObserver.pullToRefreshAnimator = view

@@ -9,7 +9,7 @@
 import AudioToolbox
 import UIKit
 
-public class RefreshFeedbackGenerator {
+class RefreshFeedbackGenerator {
     private let canUseHapticFeedback: Bool
     private var _feedbackGenerator: Any? = nil
     @available(iOS 10.0, *) private var impactGenerator: UIImpactFeedbackGenerator? {
