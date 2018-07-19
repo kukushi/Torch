@@ -88,13 +88,13 @@ public extension UIScrollView {
     }
 
     /// Stop refreshing. In most cases, you should stop the refresh manually.
-    public func stopRefresh(_ direction: PullDirection = .down) {
-        refreshView(with: direction)?.stopAnimating()
+    public func stopRefresh(_ direction: PullDirection = .down, animated: Bool = true) {
+        refreshView(with: direction)?.stopAnimating(animated: animated)
     }
     
     /// Start the refresh manually.
-    public func startRefresh(_ direction: PullDirection = .down) {
-        refreshView(with: direction)?.startAnimating()
+    public func startRefresh(_ direction: PullDirection = .down, animated: Bool = true) {
+        refreshView(with: direction)?.startAnimating(animated: animated)
     }
     
     // MARK: Private getter / setter

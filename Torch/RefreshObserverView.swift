@@ -185,12 +185,12 @@ open class RefreshObserverView: UIView {
         pullToRefreshAnimator?.pullToRefresh(self, progressDidChange: process, direction: direction)
     }
     
-    func startAnimating() {
+    func startAnimating(animated: Bool = true) {
         guard state != .refreshing else { return }
 
         state = .refreshing
         
-        UIView.animate(withDuration: 0.4, animations: { () -> Void in
+        let updateClosure = {
             if self.isPullingDown {
                 self.scrollView.contentInset.top += self.refreshViewHeight
                 self.scrollView.contentOffset.y = self.originalContentOffsetY - self.refreshViewHeight
@@ -198,13 +198,22 @@ open class RefreshObserverView: UIView {
                 self.scrollView.contentInset.bottom += self.refreshViewHeight
                 self.scrollView.contentOffset.y += self.refreshViewHeight
             }
-        }) { (finished) -> Void in
+        }
+        
+        let completionClosure = { (completion: Bool) in
             self.pullToRefreshAnimator?.pullToRefreshAnimationDidStart(self, direction: self.direction)
             self.action?(self.scrollView)
         }
+        
+        if animated {
+            UIView.animate(withDuration: 0.4, animations: updateClosure, completion: completionClosure)
+        } else {
+            updateClosure()
+            completionClosure(true)
+        }
     }
     
-    open func stopAnimating() {
+    open func stopAnimating(animated: Bool = true) {
         guard state != .done else {
             return
         }
@@ -213,16 +222,21 @@ open class RefreshObserverView: UIView {
         
         pullToRefreshAnimator?.pullToRefreshAnimationDidEnd(self, direction: direction)
         
-        UIView.animate(withDuration: 0.4, animations: {
+        let updateClosure = {
             if self.isPullingDown {
                 self.scrollView.contentOffset.y = self.originalContentOffsetY
                 self.scrollView.contentInset.top -= self.refreshViewHeight
             } else {
-                self.scrollView.contentInset.bottom -= self.refreshViewHeight
                 self.scrollView.contentOffset.y -= self.refreshViewHeight
+                self.scrollView.contentInset.bottom -= self.refreshViewHeight
             }
-        }) { _ in
-            self.state = .done
         }
+        
+        if animated {
+            UIView.animate(withDuration: 0.4, animations: updateClosure)
+        } else {
+            updateClosure()
+        }
+        
     }
 }
