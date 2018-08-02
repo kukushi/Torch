@@ -13,16 +13,23 @@ private var TorchContentSizeKVOContext = 1
 private let TorchContentOffsetKey = "contentOffset"
 private let TorchContentSizetKey = "contentSize"
 
-open class RefreshObserverView: UIView {
-    var action: RefreshAction?
-    var direction = PullDirection.down
-    weak var refreshView: UIView?
-
-    public var enableTapticFeedback = false
+open class PullObserver: NSObject {
+    let option: PullOption
+    weak var refreshView: RefreshView!
+    let action: RefreshAction
+    
+    weak var containerView: UIView!
+    
     private lazy var feedbackGenerator = RefreshFeedbackGenerator()
     
-    private var refreshViewHeight: CGFloat {
-        return refreshView?.frame.height ?? 0
+    var topConstraint: NSLayoutConstraint?
+    
+    private var direction: PullDirection {
+        return option.direction
+    }
+    
+    private var pullingHeight: CGFloat {
+        return option.areaHeight + option.topPadding
     }
     
     private var isPullingDown: Bool {
@@ -31,9 +38,7 @@ open class RefreshObserverView: UIView {
 
     private var originalContentOffsetY: CGFloat = 0
     
-    weak var pullToRefreshAnimator: PullToRefreshViewDelegate?
-    
-    open private(set) var state: PullToRefreshViewState = .done {
+    open private(set) var state: PullState = .done {
         didSet {
             guard oldValue != state else {
                 return
@@ -55,29 +60,33 @@ open class RefreshObserverView: UIView {
     }
     
     var scrollView: UIScrollView {
-        return superview as! UIScrollView
+        return containerView.superview as! UIScrollView
+    }
+    
+    init(refreshView: RefreshView, option: PullOption, action: @escaping RefreshAction) {
+        self.refreshView = refreshView
+        self.option = option
+        self.action = action
     }
     
     deinit {
-        superview?.removeObserver(self, forKeyPath: TorchContentOffsetKey)
-        superview?.removeObserver(self, forKeyPath: TorchContentSizetKey)
+        containerView.superview?.removeObserver(self, forKeyPath: TorchContentOffsetKey)
+        containerView.superview?.removeObserver(self, forKeyPath: TorchContentSizetKey)
     }
     
-    open override func willMove(toSuperview newSuperview: UIView?) {
-        if newSuperview == nil {
-            scrollView.removeObserver(self, forKeyPath: TorchContentOffsetKey)
-            if !isPullingDown {
-                scrollView.removeObserver(self, forKeyPath: TorchContentSizetKey)
-            }
+    func stopObserving() {
+        scrollView.removeObserver(self, forKeyPath: TorchContentOffsetKey)
+        if !isPullingDown {
+            scrollView.removeObserver(self, forKeyPath: TorchContentSizetKey)
         }
     }
     
-    override open func didMoveToSuperview() {
-        if superview == nil {
+    func startObserving() {
+        if containerView.superview == nil {
             return
         }
         
-        guard superview is UIScrollView else {
+        guard containerView.superview is UIScrollView else {
             fatalError("Refreher can only be used in UIScrollView and it's subclasses.")
         }
 
@@ -95,15 +104,13 @@ open class RefreshObserverView: UIView {
             observingContentOffsetChanges()
         } else if context == &TorchContentSizeKVOContext {
             observingContentSizeChanges()
-        } else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
     }
     
     // MARK: KVO
     
     func observingContentOffsetChanges() {
-        let viewHeight = refreshViewHeight
+        let viewHeight = pullingHeight
         
         guard state != .refreshing else {
             return
@@ -121,7 +128,7 @@ open class RefreshObserverView: UIView {
                     // Mark the refresh as done
                     state = .done
                     
-                    if enableTapticFeedback {
+                    if option.enableTapticFeedback {
                         feedbackGenerator.reset()
                     }
                 }
@@ -130,7 +137,7 @@ open class RefreshObserverView: UIView {
                     // Still pulling
                     let process = -offset / viewHeight
                     
-                    if enableTapticFeedback {
+                    if option.enableTapticFeedback {
                         if state == .done {
                             feedbackGenerator.prepare()
                         }
@@ -170,19 +177,20 @@ open class RefreshObserverView: UIView {
     }
     
     func observingContentSizeChanges() {
-        if !isPullingDown && frame.origin.y != scrollView.contentSize.height {
-            frame.origin.y = scrollView.contentSize.height
+        if !isPullingDown {
+            topConstraint?.constant = scrollView.contentSize.height
+            scrollView.layoutIfNeeded()
         }
     }
     
     // MARK:
     
-    func stateChanged(from oldState: PullToRefreshViewState, to state: PullToRefreshViewState) {
-        pullToRefreshAnimator?.pullToRefresh(self, stateDidChange: state, direction: direction)
+    func stateChanged(from oldState: PullState, to state: PullState) {
+        refreshView.pullToRefresh(refreshView, stateDidChange: state, direction: direction)
     }
     
     func progressAnimating(_ process: CGFloat) {
-        pullToRefreshAnimator?.pullToRefresh(self, progressDidChange: process, direction: direction)
+        refreshView.pullToRefresh(refreshView, progressDidChange: process, direction: direction)
     }
     
     func startAnimating(animated: Bool = true) {
@@ -192,17 +200,17 @@ open class RefreshObserverView: UIView {
         
         let updateClosure = {
             if self.isPullingDown {
-                self.scrollView.contentInset.top += self.refreshViewHeight
-                self.scrollView.contentOffset.y = self.originalContentOffsetY - self.refreshViewHeight
+                self.scrollView.contentInset.top += self.pullingHeight
+                self.scrollView.contentOffset.y = self.originalContentOffsetY - self.pullingHeight
             } else {
-                self.scrollView.contentInset.bottom += self.refreshViewHeight
-                self.scrollView.contentOffset.y += self.refreshViewHeight
+                self.scrollView.contentInset.bottom += self.pullingHeight
+                self.scrollView.contentOffset.y += self.pullingHeight
             }
         }
         
         let completionClosure = { (completion: Bool) in
-            self.pullToRefreshAnimator?.pullToRefreshAnimationDidStart(self, direction: self.direction)
-            self.action?(self.scrollView)
+            self.refreshView?.pullToRefreshAnimationDidStart(self.refreshView, direction: self.direction)
+            self.action(self.scrollView)
         }
         
         if animated {
@@ -213,22 +221,28 @@ open class RefreshObserverView: UIView {
         }
     }
     
-    open func stopAnimating(animated: Bool = true) {
+    open func stopAnimating(animated: Bool = true, scrollToOriginalPosition: Bool = true) {
         guard state != .done else {
             return
         }
-
+        
         state = .done
         
-        pullToRefreshAnimator?.pullToRefreshAnimationDidEnd(self, direction: direction)
+        refreshView?.pullToRefreshAnimationDidEnd(refreshView, direction: direction)
         
         let updateClosure = {
+            if scrollToOriginalPosition {
+                if self.isPullingDown {
+                    self.scrollView.contentOffset.y = self.originalContentOffsetY
+                } else {
+                    self.scrollView.contentOffset.y -= self.pullingHeight
+                }
+            }
+            
             if self.isPullingDown {
-                self.scrollView.contentOffset.y = self.originalContentOffsetY
-                self.scrollView.contentInset.top -= self.refreshViewHeight
+                self.scrollView.contentInset.top -= self.pullingHeight
             } else {
-                self.scrollView.contentOffset.y -= self.refreshViewHeight
-                self.scrollView.contentInset.bottom -= self.refreshViewHeight
+                self.scrollView.contentInset.bottom -= self.pullingHeight
             }
         }
         
@@ -237,6 +251,5 @@ open class RefreshObserverView: UIView {
         } else {
             updateClosure()
         }
-        
     }
 }

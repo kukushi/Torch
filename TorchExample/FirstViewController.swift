@@ -37,11 +37,13 @@ class FirstViewController: UIViewController {
     }
     
     private func addPullToRefresher() {
-        let width = UIScreen.main.bounds.width
-        let refreshView = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: width, height: 44))
-        refreshView.lineColor = UIColor.red
+        let refreshView = PlainRefreshView()
+        refreshView.lineColor = UIColor(red:1.00, green:0.80, blue:0.00, alpha:1.00)
         
-        tableView.addPullToRefresh(refreshView, action: { (scrollView) in
+        var option = PullOption()
+        option.topPadding = 20
+        
+        tableView.addPullToRefresh(refreshView, option: option, action: { (scrollView) in
             OperationQueue().addOperation {
                 sleep(3)
                 OperationQueue.main.addOperation {
@@ -52,21 +54,23 @@ class FirstViewController: UIViewController {
     }
     
     private func addPullUpToRefresher() {
-        let width = UIScreen.main.bounds.width
-        let refreshView = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: width, height: 44))
-        refreshView.lineColor = UIColor.red
+        let refreshView = PlainRefreshView()
+        refreshView.lineColor = UIColor(red:1.00, green:0.80, blue:0.00, alpha:1.00)
         
-        tableView.addPullToRefresh(refreshView, direction: .up) { (scrollView) in
+        var option = PullOption()
+        option.direction = .up
+        option.enableTapticFeedback = true
+        
+        tableView.addPullToRefresh(refreshView, option: option, action: { (scrollView) in
             OperationQueue().addOperation {
                 self.count += 3
                 sleep(3)
                 OperationQueue.main.addOperation {
                     self.tableView.reloadData()
-                    scrollView.stopRefresh(.up)
+                    scrollView.stopRefresh(.up, scrollToOriginalPosition: false)
                 }
             }
-        }
-        tableView.pullDownRefreshView?.enableTapticFeedback = true
+        })
     }
 }
 
