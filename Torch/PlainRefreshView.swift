@@ -81,9 +81,10 @@ extension PlainRefreshView: PullResponsable {
     }
     
     public func pullToRefreshAnimationDidStart(_ view: RefreshView, direction: PullDirection) {
+        layerLoader.strokeStart = 0.2
+        layerLoader.strokeEnd = 1
         
         let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation")
-        
         rotationAnimation.fromValue = 0.0
         rotationAnimation.toValue = Float(Double.pi * 2.0)
         rotationAnimation.duration = 1

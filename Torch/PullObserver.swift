@@ -24,6 +24,8 @@ open class PullObserver: NSObject {
     
     var topConstraint: NSLayoutConstraint?
     
+    private var leastRefreshingHeight: CGFloat = 0
+    
     private var direction: PullDirection {
         return option.direction
     }
@@ -70,8 +72,10 @@ open class PullObserver: NSObject {
     }
     
     deinit {
-        containerView.superview?.removeObserver(self, forKeyPath: TorchContentOffsetKey)
-        containerView.superview?.removeObserver(self, forKeyPath: TorchContentSizetKey)
+        if containerView != nil {
+            containerView.superview?.removeObserver(self, forKeyPath: TorchContentOffsetKey)
+            containerView.superview?.removeObserver(self, forKeyPath: TorchContentSizetKey)
+        }
     }
     
     func stopObserving() {
@@ -159,6 +163,15 @@ open class PullObserver: NSObject {
             
             let offset = scrollView.contentOffset.y - refersherContentInset.bottom
             let bottfomOffset = containerHeight + offset - contentHeight
+            
+            if option.startBeforeReachingBottom && state != .refreshing && leastRefreshingHeight != scrollView.contentSize.height {
+                if bottfomOffset > -option.startBeforeReachingBottomOffset {
+                    leastRefreshingHeight = scrollView.contentSize.height
+                    startAnimating()
+                }
+                return
+            }
+            
             if scrollView.isDragging {
                 if bottfomOffset > 0 && bottfomOffset < viewHeight {
                     let process = bottfomOffset / viewHeight
