@@ -102,5 +102,6 @@ extension PlainRefreshView: PullResponsable {
     public func pullToRefreshAnimationDidEnd(_ view: RefreshView, direction: PullDirection) {
         layerLoader.removeAllAnimations()
         layer.removeAllAnimations()
+        layerLoader.strokeEnd = 0
     }
 }
