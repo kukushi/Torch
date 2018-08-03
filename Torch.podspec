@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/kukushi/Torch.git", :tag => s.version }
   s.source_files  = "Classes", "Classes/**/*.{h,m}", "Torch/*.{h,m,swift}"
   s.exclude_files = "Classes/Exclude"
-
+  s.swift_version = "4.0"
   s.requires_arc = true
 
 end
