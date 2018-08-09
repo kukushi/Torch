@@ -16,7 +16,7 @@ public protocol PullResponsable: class {
     func preferredSize() -> CGSize
 }
 
-extension PullResponsable {
+public extension PullResponsable {
     func pullToRefreshAnimationDidStart(_ view: RefreshView, direction: PullDirection) {}
     func pullToRefreshAnimationDidEnd(_ view: RefreshView, direction: PullDirection) {}
     func pullToRefresh(_ view: RefreshView, progressDidChange progress: CGFloat, direction: PullDirection) {}

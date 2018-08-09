@@ -10,10 +10,6 @@ import UIKit
 
 open class PlainRefreshView: UIView {
     
-    open var pullToRefreshText = NSLocalizedString("Pull to refresh", comment: "Refresher")
-    open var loadingText = NSLocalizedString("Loading ...", comment: "Refresher")
-    open var releaseToRefreshText = NSLocalizedString("Release to refresh", comment: "Refresher")
-    
     open var lineColor: UIColor {
         set {
             layerLoader.strokeColor = newValue.cgColor
@@ -74,10 +70,6 @@ extension PlainRefreshView: PullResponsable {
     
     public func preferredSize() -> CGSize {
         return CGSize(width: 28, height: 28)
-    }
-    
-    public func pullToRefresh(_ view: RefreshView, stateDidChange state: PullState, direction: PullDirection) {
-        
     }
     
     public func pullToRefreshAnimationDidStart(_ view: RefreshView, direction: PullDirection) {

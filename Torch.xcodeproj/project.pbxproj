@@ -156,8 +156,8 @@
 			children = (
 				523C8CDB1AC953610068E3C7 /* Torch.h */,
 				871CC5EE21131AE600519007 /* PullOption.swift */,
-				87B238431C9D8C150063FB44 /* PullObserver.swift */,
 				523C8CF21AC953720068E3C7 /* UIScrollView+Torch.swift */,
+				87B238431C9D8C150063FB44 /* PullObserver.swift */,
 				87A82D022112BF3E00969296 /* PullResponsable.swift */,
 				87A82D052112C08700969296 /* PullContainerView.swift */,
 				87B238451C9D8F650063FB44 /* PlainRefreshView.swift */,

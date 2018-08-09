@@ -164,7 +164,11 @@ open class PullObserver: NSObject {
             let offset = scrollView.contentOffset.y - refersherContentInset.bottom
             let bottfomOffset = containerHeight + offset - contentHeight
             
-            if option.startBeforeReachingBottom && state != .refreshing && leastRefreshingHeight != scrollView.contentSize.height {
+            // Starts animation automatically and remember this location to prevent infinite animation
+            if option.startBeforeReachingBottom &&
+                (scrollView.isDragging || scrollView.isDecelerating) &&
+                state != .refreshing &&
+                leastRefreshingHeight != scrollView.contentSize.height {
                 if bottfomOffset > -option.startBeforeReachingBottomOffset {
                     leastRefreshingHeight = scrollView.contentSize.height
                     startAnimating()
