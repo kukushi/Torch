@@ -10,30 +10,30 @@ import UIKit
 import Torch
 
 class DetailTableViewController: UITableViewController {
-    
+
     var count = 20
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         title = "Torch"
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
         addPullToRefresher()
         addPullUpToRefresher()
     }
-    
+
     private func addPullToRefresher() {
         let refreshView = PlainRefreshView()
-        refreshView.lineColor = UIColor(red:1.00, green:0.80, blue:0.00, alpha:1.00)
-        
+        refreshView.lineColor = UIColor(red: 1.00, green: 0.80, blue: 0.00, alpha: 1.00)
+
         var option = PullOption()
         option.topPadding = 20
-        
+
         tableView.addPullToRefresh(refreshView, option: option, action: { (scrollView) in
             OperationQueue().addOperation {
                 sleep(3)
@@ -43,17 +43,17 @@ class DetailTableViewController: UITableViewController {
             }
         })
     }
-    
+
     private func addPullUpToRefresher() {
         let refreshView = PlainRefreshView()
-        refreshView.lineColor = UIColor(red:1.00, green:0.80, blue:0.00, alpha:1.00)
-        
+        refreshView.lineColor = UIColor(red: 1.00, green: 0.80, blue: 0.00, alpha: 1.00)
+
         var option = PullOption()
         option.direction = .up
         option.enableTapticFeedback = true
         option.startBeforeReachingBottom = true
         option.startBeforeReachingBottomOffset = 30
-        
+
         tableView.addPullToRefresh(refreshView, option: option, action: {[unowned self] (scrollView) in
             OperationQueue().addOperation {
                 self.count += arc4random() % 2 == 0 ? 3 : 0
@@ -65,15 +65,14 @@ class DetailTableViewController: UITableViewController {
             }
         })
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
         cell.textLabel?.text = "\((indexPath as NSIndexPath).row)"
         return cell
     }
-    
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return count
     }
 }
-

@@ -13,19 +13,18 @@ class SecondViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
 
     var count = 20
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         tableView.delegate = self
         tableView.dataSource = self
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
     }
-
 
 }
 
@@ -35,7 +34,7 @@ extension SecondViewController: UITableViewDelegate, UITableViewDataSource {
         cell.textLabel?.text = "\((indexPath as NSIndexPath).row)"
         return cell
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return count
     }

@@ -11,7 +11,7 @@ import UIKit
 
 class RefreshFeedbackGenerator {
     private let canUseHapticFeedback: Bool
-    private var _feedbackGenerator: Any? = nil
+    private var _feedbackGenerator: Any?
     @available(iOS 10.0, *) private var impactGenerator: UIImpactFeedbackGenerator? {
         get {
             if _feedbackGenerator == nil {
@@ -23,7 +23,7 @@ class RefreshFeedbackGenerator {
             _feedbackGenerator = newValue
         }
     }
-    
+
     init() {
         let device = UIDevice.current
         if let supportLevel = device.value(forKey: "_feedbackSupportLevel") as? NSNumber {
@@ -32,19 +32,19 @@ class RefreshFeedbackGenerator {
             canUseHapticFeedback = false
         }
     }
-    
+
     func prepare() {
         if #available(iOS 10.0, *), canUseHapticFeedback {
             impactGenerator?.prepare()
         }
     }
-    
+
     func reset() {
         if #available(iOS 10.0, *), canUseHapticFeedback {
             impactGenerator = nil
         }
     }
-    
+
     func generate() {
         if #available(iOS 10.0, *), canUseHapticFeedback {
             impactGenerator?.impactOccurred()

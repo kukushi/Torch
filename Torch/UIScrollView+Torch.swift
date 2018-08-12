@@ -20,7 +20,7 @@ public extension UIScrollView {
             objc_setAssociatedObject(self, &pullDownToRefreshViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
-    
+
     private var pullUpObserver: PullObserver? {
         get {
             return objc_getAssociatedObject(self, &pullUpToRefershViewKey) as? PullObserver
@@ -29,9 +29,9 @@ public extension UIScrollView {
             objc_setAssociatedObject(self, &pullUpToRefershViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
-    
+
     // MARK: Pull To Refresh
-    
+
     /// Add a standard pull-to-refresh view to scroll view
     ///
     /// - Parameter action: the action performed when released
@@ -51,14 +51,14 @@ public extension UIScrollView {
         if pullObserver(with: option.direction) != nil {
             return
         }
-        
+
         let refreshObserver = PullObserver(refreshView: view, option: option, action: action)
         setPullObserver(refreshObserver, direction: direction)
-        
+
         let containerView = PullContainerView()
         containerView.observer = refreshObserver
         refreshObserver.containerView = containerView
-        
+
         addSubview(containerView)
         containerView.translatesAutoresizingMaskIntoConstraints = false
         let topConstraint = direction == .down ? containerView.bottomAnchor.constraint(equalTo: topAnchor) :
@@ -70,9 +70,9 @@ public extension UIScrollView {
             containerView.heightAnchor.constraint(equalToConstant: option.areaHeight),
             topConstraint
         ])
-        
+
         refreshObserver.topConstraint = topConstraint
-        
+
         containerView.addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -87,14 +87,14 @@ public extension UIScrollView {
     public func stopRefresh(_ direction: PullDirection = .down, animated: Bool = true, scrollToOriginalPosition: Bool = true) {
         pullObserver(with: direction)?.stopAnimating(animated: animated, scrollToOriginalPosition: scrollToOriginalPosition)
     }
-    
+
     /// Start the refresh manually.
     public func startRefresh(_ direction: PullDirection = .down, animated: Bool = true) {
         pullObserver(with: direction)?.startAnimating(animated: animated)
     }
-    
+
     // MARK: Observer getter / setter
-    
+
     private func pullObserver(with direction: PullDirection = .down) -> PullObserver? {
         switch direction {
         case .down:
@@ -103,7 +103,7 @@ public extension UIScrollView {
             return pullUpObserver
         }
     }
-    
+
     private func setPullObserver(_ observer: PullObserver, direction: PullDirection = .down) {
         switch direction {
         case .down:
@@ -112,5 +112,5 @@ public extension UIScrollView {
             pullUpObserver = observer
         }
     }
-    
+
 }

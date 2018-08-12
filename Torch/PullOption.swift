@@ -30,9 +30,9 @@ public struct PullOption {
     public var areaHeight: CGFloat = 44
     public var enableTapticFeedback = false
     public var topPadding: CGFloat = 0
-    
+
     public var startBeforeReachingBottom = false
     public var startBeforeReachingBottomOffset: CGFloat = 0
-    
+
     public init() {}
 }

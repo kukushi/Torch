@@ -13,15 +13,15 @@ class PullContainerView: UIView {
 
     open override func willMove(toSuperview newSuperview: UIView?) {
         super.willMove(toSuperview: newSuperview)
-        
+
         if newSuperview == nil {
             observer?.stopObserving()
         }
     }
-    
+
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
-        
+
         observer?.startObserving()
     }
 

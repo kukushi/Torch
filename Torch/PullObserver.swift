@@ -17,42 +17,42 @@ open class PullObserver: NSObject {
     let option: PullOption
     weak var refreshView: RefreshView!
     let action: RefreshAction
-    
+
     weak var containerView: UIView!
-    
+
     private lazy var feedbackGenerator = RefreshFeedbackGenerator()
-    
+
     var topConstraint: NSLayoutConstraint?
-    
+
     private var leastRefreshingHeight: CGFloat = 0
-    
+
     private var direction: PullDirection {
         return option.direction
     }
-    
+
     private var pullingHeight: CGFloat {
         return option.areaHeight + option.topPadding
     }
-    
+
     private var isPullingDown: Bool {
         return direction == .down
     }
 
     private var originalContentOffsetY: CGFloat = 0
-    
+
     open private(set) var state: PullState = .done {
         didSet {
             guard oldValue != state else {
                 return
             }
             stateChanged(from: oldValue, to: state)
-            
+
             #if DEBUG
             print("[Refresher]: Change to state: \(state)")
             #endif
         }
     }
-    
+
     private var refersherContentInset: UIEdgeInsets {
         if #available(iOS 11.0, *) {
             return scrollView.adjustedContentInset
@@ -60,49 +60,49 @@ open class PullObserver: NSObject {
             return scrollView.contentInset
         }
     }
-    
+
     var scrollView: UIScrollView {
         return containerView.superview as! UIScrollView
     }
-    
+
     init(refreshView: RefreshView, option: PullOption, action: @escaping RefreshAction) {
         self.refreshView = refreshView
         self.option = option
         self.action = action
     }
-    
+
     deinit {
         if containerView != nil {
             containerView.superview?.removeObserver(self, forKeyPath: TorchContentOffsetKey)
             containerView.superview?.removeObserver(self, forKeyPath: TorchContentSizetKey)
         }
     }
-    
+
     func stopObserving() {
         scrollView.removeObserver(self, forKeyPath: TorchContentOffsetKey)
         if !isPullingDown {
             scrollView.removeObserver(self, forKeyPath: TorchContentSizetKey)
         }
     }
-    
+
     func startObserving() {
         if containerView.superview == nil {
             return
         }
-        
+
         guard containerView.superview is UIScrollView else {
             fatalError("Refreher can only be used in UIScrollView and it's subclasses.")
         }
 
         scrollView.addObserver(self, forKeyPath: TorchContentOffsetKey, options: .new, context: &TorchContentOffsetKVOContext)
         originalContentOffsetY = scrollView.contentOffset.y
-        
+
         if !isPullingDown {
             scrollView.addObserver(self, forKeyPath: TorchContentSizetKey, options: .new, context: &TorchContentSizeKVOContext)
         }
     }
 
-    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
 
         if context == &TorchContentOffsetKVOContext {
             observingContentOffsetChanges()
@@ -110,16 +110,16 @@ open class PullObserver: NSObject {
             observingContentSizeChanges()
         }
     }
-    
+
     // MARK: KVO
-    
+
     func observingContentOffsetChanges() {
         let viewHeight = pullingHeight
-        
+
         guard state != .refreshing else {
             return
         }
-        
+
         switch direction {
         case .down:
             let offset = scrollView.contentOffset.y + refersherContentInset.top
@@ -131,7 +131,7 @@ open class PullObserver: NSObject {
                     state = .cancel
                     // Mark the refresh as done
                     state = .done
-                    
+
                     if option.enableTapticFeedback {
                         feedbackGenerator.reset()
                     }
@@ -140,7 +140,7 @@ open class PullObserver: NSObject {
                 if offset < 0 {
                     // Still pulling
                     let process = -offset / viewHeight
-                    
+
                     if option.enableTapticFeedback {
                         if state == .done {
                             feedbackGenerator.prepare()
@@ -149,7 +149,7 @@ open class PullObserver: NSObject {
                             feedbackGenerator.generate()
                         }
                     }
-                    
+
                     state = process < 1 ? .pulling : .readyToRelease
                     progressAnimating(process)
                 }
@@ -160,10 +160,10 @@ open class PullObserver: NSObject {
             if contentHeight < containerHeight {
                 return
             }
-            
+
             let offset = scrollView.contentOffset.y - refersherContentInset.bottom
             let bottfomOffset = containerHeight + offset - contentHeight
-            
+
             // Starts animation automatically and remember this location to prevent infinite animation
             if option.startBeforeReachingBottom &&
                 (scrollView.isDragging || scrollView.isDecelerating) &&
@@ -175,7 +175,7 @@ open class PullObserver: NSObject {
                 }
                 return
             }
-            
+
             if scrollView.isDragging {
                 if bottfomOffset > 0 && bottfomOffset < viewHeight {
                     let process = bottfomOffset / viewHeight
@@ -192,29 +192,29 @@ open class PullObserver: NSObject {
             }
         }
     }
-    
+
     func observingContentSizeChanges() {
         if !isPullingDown {
             topConstraint?.constant = scrollView.contentSize.height
             scrollView.layoutIfNeeded()
         }
     }
-    
-    // MARK:
-    
+
+    // MARK: 
+
     func stateChanged(from oldState: PullState, to state: PullState) {
         refreshView.pullToRefresh(refreshView, stateDidChange: state, direction: direction)
     }
-    
+
     func progressAnimating(_ process: CGFloat) {
         refreshView.pullToRefresh(refreshView, progressDidChange: process, direction: direction)
     }
-    
+
     func startAnimating(animated: Bool = true) {
         guard state != .refreshing else { return }
 
         state = .refreshing
-        
+
         let updateClosure = {
             if self.isPullingDown {
                 self.scrollView.contentInset.top += self.pullingHeight
@@ -224,12 +224,12 @@ open class PullObserver: NSObject {
                 self.scrollView.contentOffset.y += self.pullingHeight
             }
         }
-        
+
         let completionClosure = { (completion: Bool) in
             self.refreshView?.pullToRefreshAnimationDidStart(self.refreshView, direction: self.direction)
             self.action(self.scrollView)
         }
-        
+
         if animated {
             UIView.animate(withDuration: 0.4, animations: updateClosure, completion: completionClosure)
         } else {
@@ -237,16 +237,16 @@ open class PullObserver: NSObject {
             completionClosure(true)
         }
     }
-    
+
     open func stopAnimating(animated: Bool = true, scrollToOriginalPosition: Bool = true) {
         guard state != .done else {
             return
         }
-        
+
         state = .done
-        
+
         refreshView?.pullToRefreshAnimationDidEnd(refreshView, direction: direction)
-        
+
         let updateClosure = {
             if scrollToOriginalPosition {
                 if self.isPullingDown {
@@ -255,14 +255,14 @@ open class PullObserver: NSObject {
                     self.scrollView.contentOffset.y -= self.pullingHeight
                 }
             }
-            
+
             if self.isPullingDown {
                 self.scrollView.contentInset.top -= self.pullingHeight
             } else {
                 self.scrollView.contentInset.bottom -= self.pullingHeight
             }
         }
-        
+
         if animated {
             UIView.animate(withDuration: 0.4, animations: updateClosure)
         } else {

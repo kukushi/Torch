@@ -9,7 +9,7 @@
 import UIKit
 
 open class PlainRefreshView: UIView {
-    
+
     open var lineColor: UIColor {
         set {
             layerLoader.strokeColor = newValue.cgColor
@@ -18,7 +18,7 @@ open class PlainRefreshView: UIView {
             return UIColor(cgColor: layerLoader.strokeColor!)
         }
     }
-    
+
     fileprivate let layerLoader: CAShapeLayer = {
         let layer = CAShapeLayer()
         layer.strokeColor = UIColor.red.cgColor
@@ -31,28 +31,28 @@ open class PlainRefreshView: UIView {
     }()
 
     // MARK: Initalization
-    
+
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         initalize()
     }
 
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        
+
         initalize()
     }
-    
+
     fileprivate func initalize() {
         layer.addSublayer(layerLoader)
     }
-    
-    // MARK:
-    
+
+    // MARK: 
+
     open override func layoutSubviews() {
         super.layoutSubviews()
-        
+
         let bezierPathLoader = UIBezierPath()
         let size = frame.size
         let startAngle = CGFloat(-Double.pi * 0.6)
@@ -61,36 +61,36 @@ open class PlainRefreshView: UIView {
                                 startAngle: startAngle,
                                 endAngle: CGFloat(2 * Double.pi) + startAngle,
                                 clockwise: true)
-        
+
         layerLoader.path = bezierPathLoader.cgPath
     }
 }
 
 extension PlainRefreshView: PullResponsable {
-    
+
     public func preferredSize() -> CGSize {
         return CGSize(width: 28, height: 28)
     }
-    
+
     public func pullToRefreshAnimationDidStart(_ view: RefreshView, direction: PullDirection) {
         layerLoader.strokeStart = 0.2
         layerLoader.strokeEnd = 1
-        
+
         let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation")
         rotationAnimation.fromValue = 0.0
         rotationAnimation.toValue = Float(Double.pi * 2.0)
         rotationAnimation.duration = 1
         rotationAnimation.repeatCount = HUGE
-        
+
         layer.add(rotationAnimation, forKey: "")
     }
-    
+
     public func pullToRefresh(_ view: RefreshView, progressDidChange progress: CGFloat, direction: PullDirection) {
         let tweak = min(max(progress - 0.3, 0), 0.7)
         layerLoader.strokeStart = tweak / 3.5
         layerLoader.strokeEnd = tweak + 0.3
     }
-    
+
     public func pullToRefreshAnimationDidEnd(_ view: RefreshView, direction: PullDirection) {
         layerLoader.removeAllAnimations()
         layer.removeAllAnimations()

@@ -20,12 +20,12 @@ class TableView: UITableView {
 
 class FirstViewController: UIViewController {
     @IBOutlet weak var tableView: TableView!
-    
+
     var count = 20
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         title = "Torch"
     }
 
@@ -35,14 +35,14 @@ class FirstViewController: UIViewController {
         addPullToRefresher()
         addPullUpToRefresher()
     }
-    
+
     private func addPullToRefresher() {
         let refreshView = PlainRefreshView()
-        refreshView.lineColor = UIColor(red:1.00, green:0.80, blue:0.00, alpha:1.00)
-        
+        refreshView.lineColor = UIColor(red: 1.00, green: 0.80, blue: 0.00, alpha: 1.00)
+
         var option = PullOption()
         option.topPadding = 20
-        
+
         tableView.addPullToRefresh(refreshView, option: option, action: { (scrollView) in
             OperationQueue().addOperation {
                 sleep(3)
@@ -52,17 +52,17 @@ class FirstViewController: UIViewController {
             }
         })
     }
-    
+
     private func addPullUpToRefresher() {
         let refreshView = PlainRefreshView()
-        refreshView.lineColor = UIColor(red:1.00, green:0.80, blue:0.00, alpha:1.00)
-        
+        refreshView.lineColor = UIColor(red: 1.00, green: 0.80, blue: 0.00, alpha: 1.00)
+
         var option = PullOption()
         option.direction = .up
         option.enableTapticFeedback = true
         option.startBeforeReachingBottom = true
         option.startBeforeReachingBottomOffset = 30
-        
+
         tableView.addPullToRefresh(refreshView, option: option, action: { [unowned self] (scrollView) in
             OperationQueue().addOperation {
                 self.count += arc4random() % 2 == 0 ? 3 : 0
@@ -82,7 +82,7 @@ extension FirstViewController: UITableViewDelegate, UITableViewDataSource {
         cell.textLabel?.text = "\((indexPath as NSIndexPath).row)"
         return cell
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return count
     }
