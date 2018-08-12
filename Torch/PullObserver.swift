@@ -8,11 +8,6 @@
 
 import UIKit
 
-private var TorchContentOffsetKVOContext = 0
-private var TorchContentSizeKVOContext = 1
-private let TorchContentOffsetKey = "contentOffset"
-private let TorchContentSizetKey = "contentSize"
-
 open class PullObserver: NSObject {
     let option: PullOption
     weak var refreshView: RefreshView!
@@ -39,6 +34,9 @@ open class PullObserver: NSObject {
     }
 
     private var originalContentOffsetY: CGFloat = 0
+
+    private var observingContentOffsetToken: NSKeyValueObservation?
+    private var observingContentSizeToken: NSKeyValueObservation?
 
     open private(set) var state: PullState = .done {
         didSet {
@@ -72,17 +70,13 @@ open class PullObserver: NSObject {
     }
 
     deinit {
-        if containerView != nil {
-            containerView.superview?.removeObserver(self, forKeyPath: TorchContentOffsetKey)
-            containerView.superview?.removeObserver(self, forKeyPath: TorchContentSizetKey)
-        }
+        observingContentSizeToken?.invalidate()
+        observingContentOffsetToken?.invalidate()
     }
 
     func stopObserving() {
-        scrollView.removeObserver(self, forKeyPath: TorchContentOffsetKey)
-        if !isPullingDown {
-            scrollView.removeObserver(self, forKeyPath: TorchContentSizetKey)
-        }
+        observingContentSizeToken?.invalidate()
+        observingContentOffsetToken?.invalidate()
     }
 
     func startObserving() {
@@ -94,20 +88,20 @@ open class PullObserver: NSObject {
             fatalError("Refreher can only be used in UIScrollView and it's subclasses.")
         }
 
-        scrollView.addObserver(self, forKeyPath: TorchContentOffsetKey, options: .new, context: &TorchContentOffsetKVOContext)
+        observingContentOffsetToken = scrollView.observe(\.contentOffset,
+                                                         options: .new) { [weak self] (_, _) in
+            guard let strongSelf = self else { return }
+            strongSelf.observingContentOffsetChanges()
+        }
+
         originalContentOffsetY = scrollView.contentOffset.y
 
         if !isPullingDown {
-            scrollView.addObserver(self, forKeyPath: TorchContentSizetKey, options: .new, context: &TorchContentSizeKVOContext)
-        }
-    }
-
-    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-
-        if context == &TorchContentOffsetKVOContext {
-            observingContentOffsetChanges()
-        } else if context == &TorchContentSizeKVOContext {
-            observingContentSizeChanges()
+            observingContentSizeToken = scrollView.observe(\.contentSize,
+                                                           options: .new) { [weak self] (_, _) in
+                guard let strongSelf = self else { return }
+                strongSelf.observingContentSizeChanges()
+            }
         }
     }
 
