@@ -1,25 +1,15 @@
 //
-//  FirstViewController.swift
+//  DetailTableViewController.swift
 //  TorchExample
 //
-//  Created by kukushi on 3/30/15.
-//  Copyright (c) 2015 Xing He. All rights reserved.
+//  Created by kukushi on 2018/8/2.
+//  Copyright © 2018 Xing He. All rights reserved.
 //
 
 import UIKit
 import Torch
 
-class TableView: UITableView {
-    override var contentOffset: CGPoint {
-        didSet {
-//            print("OffsetY", contentOffset.y, "InsetTop", contentInset.top)
-//            print("ViewHeight", frame.height, "ContentHeight", contentSize.height)
-        }
-    }
-}
-
-class FirstViewController: UIViewController {
-    @IBOutlet weak var tableView: TableView!
+class DetailTableViewController: UITableViewController {
 
     var count = 20
 
@@ -27,6 +17,7 @@ class FirstViewController: UIViewController {
         super.viewDidLoad()
 
         title = "Torch"
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -63,7 +54,7 @@ class FirstViewController: UIViewController {
         option.startBeforeReachingBottom = true
         option.startBeforeReachingBottomOffset = 30
 
-        tableView.addPullToRefresh(refreshView, option: option, action: { [unowned self] (scrollView) in
+        tableView.addPullToRefresh(refreshView, option: option, action: {[unowned self] (scrollView) in
             OperationQueue().addOperation {
                 self.count += arc4random() % 2 == 0 ? 3 : 0
                 sleep(3)
@@ -74,16 +65,14 @@ class FirstViewController: UIViewController {
             }
         })
     }
-}
 
-extension FirstViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
         cell.textLabel?.text = "\((indexPath as NSIndexPath).row)"
         return cell
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return count
     }
 }

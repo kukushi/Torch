@@ -8,75 +8,109 @@
 
 import UIKit
 
-public typealias RefreshAction = (_ scrollView: UIScrollView) -> Void
-
-public enum PullToRefreshViewState {
-    case pulling
-    case readyToRelease
-    case refreshing
-    case cancel
-    case done
-}
-
-public protocol PullToRefreshViewDelegate {
-    func pullToRefreshAnimationDidStart(_ view: RefreshObserverView)
-    func pullToRefreshAnimationDidEnd(_ view: RefreshObserverView)
-    func pullToRefresh(_ view: RefreshObserverView, progressDidChange progress: CGFloat)
-    func pullToRefresh(_ view: RefreshObserverView, stateDidChange state: PullToRefreshViewState)
-}
-
-private var refreshViewKey = 0
+private var pullDownToRefreshViewKey = 0
+private var pullUpToRefershViewKey = 1
 
 public extension UIScrollView {
-    public private(set) var refreshView: RefreshObserverView? {
+    private var pullDownObserver: PullObserver? {
         get {
-            return objc_getAssociatedObject(self, &refreshViewKey) as? RefreshObserverView
+            return objc_getAssociatedObject(self, &pullDownToRefreshViewKey) as? PullObserver
         }
         set {
-            objc_setAssociatedObject(self, &refreshViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, &pullDownToRefreshViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
-    
+
+    private var pullUpObserver: PullObserver? {
+        get {
+            return objc_getAssociatedObject(self, &pullUpToRefershViewKey) as? PullObserver
+        }
+        set {
+            objc_setAssociatedObject(self, &pullUpToRefershViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+
+    // MARK: Pull To Refresh
+
     /// Add a standard pull-to-refresh view to scroll view
     ///
     /// - Parameter action: the action performed when released
-    public func addPullToRefresh(_ action: @escaping RefreshAction) {
-        let width = UIScreen.main.bounds.width
-        let refreshView = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: width, height: 44))
-
-        let refreshObserver = RefreshObserverView(frame: CGRect(x: 0, y: -refreshView.frame.height, width: 0, height: 0))
-        refreshObserver.action = action
-        refreshObserver.pullToRefreshAnimator = refreshView
-        refreshObserver.addSubview(refreshView)
-        
-        self.refreshView = refreshObserver
-        addSubview(refreshObserver)
-    }
+//    public func addPullToRefresh(_ direction: PullDirection = .down, action: @escaping RefreshAction) {
+//        let view = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: bounds.width, height: 44))
+//        view.autoresizingMask = [.flexibleWidth, .flexibleRightMargin]
+//        addPullToRefresh(view, direction: direction, action: action)
+//    }
 
     /// Add a custom pull-to-refresh view to scroll view
     ///
     /// - Parameters:
     ///   - refreshView: the custom refresh view
     ///   - action: the action performed when released
-    public func addPullToRefresh<T: UIView>(_ refreshView: T, action: @escaping RefreshAction) where T: PullToRefreshViewDelegate {
-        let viewHeight = refreshView.frame.height
-        let refreshObserver = RefreshObserverView(frame: CGRect(x: 0, y: -viewHeight, width: 0, height: 0))
-        refreshObserver.action = action
-        
-        refreshObserver.pullToRefreshAnimator = refreshView
-        refreshObserver.addSubview(refreshView)
-        
-        self.refreshView = refreshObserver
-        addSubview(refreshObserver)
+    public func addPullToRefresh(_ view: RefreshView, option: PullOption, action: @escaping RefreshAction) {
+        let direction = option.direction
+        if pullObserver(with: option.direction) != nil {
+            return
+        }
+
+        let refreshObserver = PullObserver(refreshView: view, option: option, action: action)
+        setPullObserver(refreshObserver, direction: direction)
+
+        let containerView = PullContainerView()
+        containerView.observer = refreshObserver
+        refreshObserver.containerView = containerView
+
+        addSubview(containerView)
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        let topConstraint = direction == .down ? containerView.bottomAnchor.constraint(equalTo: topAnchor) :
+            containerView.topAnchor.constraint(equalTo: topAnchor, constant: contentSize.height)
+        NSLayoutConstraint.activate([
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            containerView.widthAnchor.constraint(equalTo: widthAnchor),
+            containerView.heightAnchor.constraint(equalToConstant: option.areaHeight),
+            topConstraint
+        ])
+
+        refreshObserver.topConstraint = topConstraint
+
+        containerView.addSubview(view)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            view.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            view.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            view.widthAnchor.constraint(equalToConstant: view.preferredSize().width),
+            view.widthAnchor.constraint(equalToConstant: view.preferredSize().height)
+        ])
     }
 
     /// Stop refreshing. In most cases, you should stop the refresh manually.
-    public func stopRefresh() {
-        refreshView?.stopAnimating()
+    public func stopRefresh(_ direction: PullDirection = .down, animated: Bool = true, scrollToOriginalPosition: Bool = true) {
+        pullObserver(with: direction)?.stopAnimating(animated: animated, scrollToOriginalPosition: scrollToOriginalPosition)
     }
-    
+
     /// Start the refresh manually.
-    public func startRefresh() {
-        refreshView?.startAnimating()
+    public func startRefresh(_ direction: PullDirection = .down, animated: Bool = true) {
+        pullObserver(with: direction)?.startAnimating(animated: animated)
     }
+
+    // MARK: Observer getter / setter
+
+    private func pullObserver(with direction: PullDirection = .down) -> PullObserver? {
+        switch direction {
+        case .down:
+            return pullDownObserver
+        case .up:
+            return pullUpObserver
+        }
+    }
+
+    private func setPullObserver(_ observer: PullObserver, direction: PullDirection = .down) {
+        switch direction {
+        case .down:
+            pullDownObserver = observer
+        case .up:
+            pullUpObserver = observer
+        }
+    }
+
 }

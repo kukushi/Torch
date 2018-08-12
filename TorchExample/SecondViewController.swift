@@ -7,19 +7,35 @@
 //
 
 import UIKit
+import Torch
 
 class SecondViewController: UIViewController {
+    @IBOutlet weak var tableView: UITableView!
+
+    var count = 20
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
+        tableView.delegate = self
+        tableView.dataSource = self
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
+    }
 
 }
 
+extension SecondViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
+        cell.textLabel?.text = "\((indexPath as NSIndexPath).row)"
+        return cell
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return count
+    }
+}
