@@ -1,0 +1,15 @@
+disabled_rules:
+   # Force case is handy with handing table view cell
+   - force_cast
+   - cyclomatic_complexity
+   - function_body_length
+
+excluded:
+  - Carthage
+  - Pods
+
+identifier_name:
+  excluded:
+    - up
+
+line_length: 140
