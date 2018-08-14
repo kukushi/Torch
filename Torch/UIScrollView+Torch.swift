@@ -35,11 +35,10 @@ public extension UIScrollView {
     /// Add a standard pull-to-refresh view to scroll view
     ///
     /// - Parameter action: the action performed when released
-//    public func addPullToRefresh(_ direction: PullDirection = .down, action: @escaping RefreshAction) {
-//        let view = PlainRefreshView(frame: CGRect(x: 0, y: 0, width: bounds.width, height: 44))
-//        view.autoresizingMask = [.flexibleWidth, .flexibleRightMargin]
-//        addPullToRefresh(view, direction: direction, action: action)
-//    }
+    public func addPullToRefresh(_ option: PullOption, action: @escaping RefreshAction) {
+        let view = PlainRefreshView()
+        addPullToRefresh(view, option: option, action: action)
+    }
 
     /// Add a custom pull-to-refresh view to scroll view
     ///

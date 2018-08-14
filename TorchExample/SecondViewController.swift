@@ -24,6 +24,34 @@ class SecondViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        addPullUpToRefresher()
+
+    }
+
+    private func addPullUpToRefresher() {
+        let refreshView = PlainRefreshView()
+        refreshView.lineColor = UIColor(red: 1.00, green: 0.80, blue: 0.00, alpha: 1.00)
+
+        var option = PullOption()
+        option.direction = .up
+        option.enableTapticFeedback = true
+
+        tableView.addPullToRefresh(refreshView, option: option, action: { [unowned self] (scrollView) in
+            OperationQueue().addOperation {
+                let newRows = arc4random() % 2 == 0 ? 3 : 0
+                self.count += newRows
+                sleep(2)
+                OperationQueue.main.addOperation {
+                    if newRows != 0 {
+                        let cellNumber = self.tableView.numberOfRows(inSection: 0)
+                        let addedIndexs = (cellNumber..<(cellNumber + newRows)).map { IndexPath(row: $0, section: 0) }
+                        self.tableView.insertRows(at: addedIndexs, with: .none)
+                    }
+
+                    scrollView.stopRefresh(.up, scrollToOriginalPosition: newRows == 0 ? true : false)
+                }
+            }
+        })
     }
 
 }

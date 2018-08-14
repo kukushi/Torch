@@ -61,12 +61,12 @@ class FirstViewController: UIViewController {
         option.direction = .up
         option.enableTapticFeedback = true
         option.startBeforeReachingBottom = true
-        option.startBeforeReachingBottomOffset = 30
+        option.startBeforeReachingBottomOffset = self.tableView.frame.height * 0.2
 
         tableView.addPullToRefresh(refreshView, option: option, action: { [unowned self] (scrollView) in
             OperationQueue().addOperation {
-                self.count += arc4random() % 2 == 0 ? 3 : 0
-                sleep(3)
+                self.count += 10
+                usleep(200)
                 OperationQueue.main.addOperation {
                     self.tableView.reloadData()
                     scrollView.stopRefresh(.up, scrollToOriginalPosition: false)

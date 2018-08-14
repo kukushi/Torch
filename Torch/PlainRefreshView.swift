@@ -87,13 +87,16 @@ extension PlainRefreshView: PullResponsable {
 
     public func pullToRefresh(_ view: RefreshView, progressDidChange progress: CGFloat, direction: PullDirection) {
         let tweak = min(max(progress - 0.3, 0), 0.7)
-        layerLoader.strokeStart = tweak / 3.5
+        layerLoader.strokeStart = tweak / 3.0
         layerLoader.strokeEnd = tweak + 0.3
     }
 
     public func pullToRefreshAnimationDidEnd(_ view: RefreshView, direction: PullDirection) {
         layerLoader.removeAllAnimations()
         layer.removeAllAnimations()
+    }
+
+    public func pullToRefreshAnimationDidFinished(_ view: RefreshView, direction: PullDirection) {
         layerLoader.strokeEnd = 0
     }
 }

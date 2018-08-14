@@ -11,14 +11,17 @@ import CoreGraphics
 public protocol PullResponsable: class {
     func pullToRefreshAnimationDidStart(_ view: RefreshView, direction: PullDirection)
     func pullToRefreshAnimationDidEnd(_ view: RefreshView, direction: PullDirection)
+    func pullToRefreshAnimationDidFinished(_ view: RefreshView, direction: PullDirection)
     func pullToRefresh(_ view: RefreshView, progressDidChange progress: CGFloat, direction: PullDirection)
     func pullToRefresh(_ view: RefreshView, stateDidChange state: PullState, direction: PullDirection)
+
     func preferredSize() -> CGSize
 }
 
 public extension PullResponsable {
     func pullToRefreshAnimationDidStart(_ view: RefreshView, direction: PullDirection) {}
     func pullToRefreshAnimationDidEnd(_ view: RefreshView, direction: PullDirection) {}
+    func pullToRefreshAnimationDidFinished(_ view: RefreshView, direction: PullDirection) {}
     func pullToRefresh(_ view: RefreshView, progressDidChange progress: CGFloat, direction: PullDirection) {}
     func pullToRefresh(_ view: RefreshView, stateDidChange state: PullState, direction: PullDirection) {}
 }

@@ -160,10 +160,13 @@ open class PullObserver: NSObject {
 
             // Starts animation automatically and remember this location to prevent infinite animation
             if option.startBeforeReachingBottom &&
-                (scrollView.isDragging || scrollView.isDecelerating) &&
                 state != .refreshing &&
                 leastRefreshingHeight != scrollView.contentSize.height {
                 if bottfomOffset > -option.startBeforeReachingBottomOffset {
+                    #if DEBUG
+                    print("[Refresher]: Strat refreshing automatically.")
+                    #endif
+
                     leastRefreshingHeight = scrollView.contentSize.height
                     startAnimating()
                 }
@@ -258,9 +261,12 @@ open class PullObserver: NSObject {
         }
 
         if animated {
-            UIView.animate(withDuration: 0.4, animations: updateClosure)
+            UIView.animate(withDuration: 0.4, animations: updateClosure) { (_) in
+                self.refreshView.pullToRefreshAnimationDidFinished(self.refreshView, direction: self.direction)
+            }
         } else {
             updateClosure()
+            refreshView.pullToRefreshAnimationDidFinished(refreshView, direction: direction)
         }
     }
 }
