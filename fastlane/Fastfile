@@ -34,12 +34,6 @@ platform :ios do
   end
 
   desc "Runs all the tests"
-  lane :test do
-    cocoapods(
-      silent: true,
-      repo_update: true
-    )
-    
     scan
   end
 end
