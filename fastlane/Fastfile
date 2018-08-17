@@ -34,6 +34,7 @@ platform :ios do
   end
 
   desc "Runs all the tests"
+  lane :test do |options|
     scan
   end
 end
