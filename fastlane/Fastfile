@@ -2,6 +2,7 @@ fastlane_version "1.101.0"
 
 default_platform :ios
 platform :ios do
+
   desc "Increment the framework's build number without committing the changes. Returns a string of the new, bumped version."
   lane :bump do |options|
     # Only bump from master branch
@@ -30,5 +31,15 @@ platform :ios do
       grouping: "fastlane",
       build_number: "#{get_version_number}(#{get_build_number})"
     )
+  end
+
+  desc "Runs all the tests"
+  lane :test do
+    cocoapods(
+      silent: true,
+      repo_update: true
+    )
+    
+    scan
   end
 end
