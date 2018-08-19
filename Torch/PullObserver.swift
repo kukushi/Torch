@@ -70,13 +70,35 @@ open class PullObserver: NSObject {
     }
 
     deinit {
-        observingContentSizeToken?.invalidate()
-        observingContentOffsetToken?.invalidate()
+        cancelKVO()
     }
 
     func stopObserving() {
-        observingContentSizeToken?.invalidate()
-        observingContentOffsetToken?.invalidate()
+        cancelKVO()
+    }
+
+    private func cancelKVO() {
+        if #available(iOS 11.0, *) {
+            observingContentSizeToken = nil
+            observingContentOffsetToken = nil
+        } else {
+            // NSKeyValueObservation crash on deinit on iOS 10
+            // https://bugs.swift.org/browse/SR-5816
+            guard containerView != nil else {
+                return
+            }
+
+            if let scrollView = containerView.superview {
+                if let observingContentSizeToken = observingContentSizeToken {
+                    scrollView.removeObserver(observingContentSizeToken, forKeyPath: "contentSize")
+                }
+                if let observingContentOffsetToken = observingContentOffsetToken {
+                    scrollView.removeObserver(observingContentOffsetToken, forKeyPath: "contentOffset")
+                }
+            }
+            observingContentSizeToken = nil
+            observingContentOffsetToken = nil
+        }
     }
 
     func startObserving() {
