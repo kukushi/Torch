@@ -12,18 +12,18 @@ private var pullDownToRefreshViewKey = 0
 private var pullUpToRefershViewKey = 1
 
 public extension UIScrollView {
-    private var pullDownObserver: PullObserver? {
+    private var pullDownObserver: ScrollObserver? {
         get {
-            return objc_getAssociatedObject(self, &pullDownToRefreshViewKey) as? PullObserver
+            return objc_getAssociatedObject(self, &pullDownToRefreshViewKey) as? ScrollObserver
         }
         set {
             objc_setAssociatedObject(self, &pullDownToRefreshViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 
-    private var pullUpObserver: PullObserver? {
+    private var pullUpObserver: ScrollObserver? {
         get {
-            return objc_getAssociatedObject(self, &pullUpToRefershViewKey) as? PullObserver
+            return objc_getAssociatedObject(self, &pullUpToRefershViewKey) as? ScrollObserver
         }
         set {
             objc_setAssociatedObject(self, &pullUpToRefershViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -51,11 +51,12 @@ public extension UIScrollView {
             return
         }
 
-        let refreshObserver = PullObserver(refreshView: view, option: option, action: action)
+        let refreshObserver = ScrollObserver(refreshView: view, option: option, action: action)
         setPullObserver(refreshObserver, direction: direction)
 
         let containerView = PullContainerView()
         containerView.observer = refreshObserver
+
         refreshObserver.containerView = containerView
 
         addSubview(containerView)
@@ -94,7 +95,7 @@ public extension UIScrollView {
 
     // MARK: Observer getter / setter
 
-    private func pullObserver(with direction: PullDirection = .down) -> PullObserver? {
+    private func pullObserver(with direction: PullDirection = .down) -> ScrollObserver? {
         switch direction {
         case .down:
             return pullDownObserver
@@ -103,7 +104,7 @@ public extension UIScrollView {
         }
     }
 
-    private func setPullObserver(_ observer: PullObserver, direction: PullDirection = .down) {
+    private func setPullObserver(_ observer: ScrollObserver, direction: PullDirection = .down) {
         switch direction {
         case .down:
             pullDownObserver = observer

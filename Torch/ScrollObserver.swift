@@ -8,12 +8,12 @@
 
 import UIKit
 
-open class PullObserver: NSObject {
+class ScrollObserver: NSObject {
     let option: PullOption
-    weak var refreshView: RefreshView!
     let action: RefreshAction
 
-    weak var containerView: UIView!
+    weak var refreshView: RefreshView?
+    weak var containerView: UIView?
 
     private lazy var feedbackGenerator = RefreshFeedbackGenerator()
 
@@ -60,7 +60,7 @@ open class PullObserver: NSObject {
     }
 
     var scrollView: UIScrollView {
-        return containerView.superview as! UIScrollView
+        return containerView?.superview as! UIScrollView
     }
 
     init(refreshView: RefreshView, option: PullOption, action: @escaping RefreshAction) {
@@ -88,7 +88,7 @@ open class PullObserver: NSObject {
                 return
             }
 
-            if let scrollView = containerView.superview {
+            if let scrollView = containerView?.superview {
                 if let observingContentSizeToken = observingContentSizeToken {
                     scrollView.removeObserver(observingContentSizeToken, forKeyPath: "contentSize")
                 }
@@ -102,11 +102,11 @@ open class PullObserver: NSObject {
     }
 
     func startObserving() {
-        if containerView.superview == nil {
+        if containerView?.superview == nil {
             return
         }
 
-        guard containerView.superview is UIScrollView else {
+        guard containerView?.superview is UIScrollView else {
             fatalError("Refreher can only be used in UIScrollView and it's subclasses.")
         }
 
@@ -222,10 +222,12 @@ open class PullObserver: NSObject {
     // MARK: 
 
     func stateChanged(from oldState: PullState, to state: PullState) {
+        guard let refreshView = refreshView else { return }
         refreshView.pullToRefresh(refreshView, stateDidChange: state, direction: direction)
     }
 
     func progressAnimating(_ process: CGFloat) {
+        guard let refreshView = refreshView else { return }
         refreshView.pullToRefresh(refreshView, progressDidChange: process, direction: direction)
     }
 
@@ -245,7 +247,11 @@ open class PullObserver: NSObject {
         }
 
         let completionClosure = { (completion: Bool) in
-            self.refreshView?.pullToRefreshAnimationDidStart(self.refreshView, direction: self.direction)
+            guard let refreshView = self.refreshView else {
+                return
+            }
+            
+            refreshView.pullToRefreshAnimationDidStart(refreshView, direction: self.direction)
             self.action(self.scrollView)
         }
 
@@ -264,7 +270,10 @@ open class PullObserver: NSObject {
 
         state = .done
 
-        refreshView?.pullToRefreshAnimationDidEnd(refreshView, direction: direction)
+        guard let refreshView = self.refreshView else {
+            return
+        }
+        refreshView.pullToRefreshAnimationDidEnd(refreshView, direction: direction)
 
         let updateClosure = {
             if scrollToOriginalPosition {
@@ -284,7 +293,10 @@ open class PullObserver: NSObject {
 
         if animated {
             UIView.animate(withDuration: 0.4, animations: updateClosure) { (_) in
-                self.refreshView.pullToRefreshAnimationDidFinished(self.refreshView, direction: self.direction)
+                guard let refreshView = self.refreshView else {
+                    return
+                }
+                refreshView.pullToRefreshAnimationDidFinished(refreshView, direction: self.direction)
             }
         } else {
             updateClosure()

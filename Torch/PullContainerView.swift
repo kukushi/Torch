@@ -9,7 +9,7 @@
 import UIKit
 
 class PullContainerView: UIView {
-    var observer: PullObserver?
+    var observer: ScrollObserver?
 
     open override func willMove(toSuperview newSuperview: UIView?) {
         super.willMove(toSuperview: newSuperview)
