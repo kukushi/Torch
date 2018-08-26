@@ -51,7 +51,7 @@ class ScrollObserver: NSObject {
         }
     }
 
-    private var refersherContentInset: UIEdgeInsets {
+    private var appropriateContentInset: UIEdgeInsets {
         if #available(iOS 11.0, *) {
             return scrollView.adjustedContentInset
         } else {
@@ -138,7 +138,7 @@ class ScrollObserver: NSObject {
 
         switch direction {
         case .down:
-            let offset = scrollView.contentOffset.y + refersherContentInset.top
+            let offset = scrollView.contentOffset.y + appropriateContentInset.top
             if !scrollView.isDragging {
                 if offset <= -viewHeight {
                     // Enough pulling, action should be triggered
@@ -166,8 +166,7 @@ class ScrollObserver: NSObject {
                         }
                     }
 
-                    state = process < 1 ? .pulling : .readyToRelease
-                    progressAnimating(process)
+                    processAnimatingAndState(process)
                 }
             }
         case .up:
@@ -177,7 +176,7 @@ class ScrollObserver: NSObject {
                 return
             }
 
-            let offset = scrollView.contentOffset.y - refersherContentInset.bottom
+            let offset = scrollView.contentOffset.y - appropriateContentInset.bottom
             let bottfomOffset = containerHeight + offset - contentHeight
 
             // Starts animation automatically and remember this location to prevent infinite animation
@@ -196,9 +195,9 @@ class ScrollObserver: NSObject {
             }
 
             if scrollView.isDragging {
-                if bottfomOffset > 0 && bottfomOffset < viewHeight {
+                if bottfomOffset > 0 {
                     let process = bottfomOffset / viewHeight
-                    progressAnimating(process)
+                    processAnimatingAndState(process)
                 }
             } else {
                 if bottfomOffset >= viewHeight {
@@ -226,7 +225,9 @@ class ScrollObserver: NSObject {
         refreshView.pullToRefresh(refreshView, stateDidChange: state, direction: direction)
     }
 
-    func progressAnimating(_ process: CGFloat) {
+    func processAnimatingAndState(_ process: CGFloat) {
+        state = process < 1 ? .pulling : .readyToRelease
+
         guard let refreshView = refreshView else { return }
         refreshView.pullToRefresh(refreshView, progressDidChange: process, direction: direction)
     }
@@ -250,7 +251,7 @@ class ScrollObserver: NSObject {
             guard let refreshView = self.refreshView else {
                 return
             }
-            
+
             refreshView.pullToRefreshAnimationDidStart(refreshView, direction: self.direction)
             self.action(self.scrollView)
         }
@@ -264,7 +265,7 @@ class ScrollObserver: NSObject {
     }
 
     open func stopAnimating(animated: Bool = true, scrollToOriginalPosition: Bool = true) {
-        guard state != .done else {
+        guard state == .refreshing else {
             return
         }
 
@@ -273,6 +274,7 @@ class ScrollObserver: NSObject {
         guard let refreshView = self.refreshView else {
             return
         }
+
         refreshView.pullToRefreshAnimationDidEnd(refreshView, direction: direction)
 
         let updateClosure = {
