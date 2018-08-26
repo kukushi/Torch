@@ -1,0 +1,14 @@
+language: objective-c
+os: osx
+osx_image: xcode9.3
+
+-before_install:
+ - |
+    gem install xcpretty -N --no-ri --no-rdoc
+script:
+- |
+    set -o pipefail
+    xcodebuild clean test -project Torch.xcodeproj -scheme Torch -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.3.1' -enableCodeCoverage YES | bundle exec xcpretty
+after_success:
+    - sleep 5
+    - bash <(curl -s https://codecov.io/bash)

@@ -30,6 +30,10 @@ public extension UIScrollView {
         }
     }
 
+    public func pullState(of direction: PullDirection) -> PullState {
+        return pullObserver(with: direction)?.state ?? .done
+    }
+
     // MARK: Pull To Refresh
 
     /// Add a standard pull-to-refresh view to scroll view
@@ -47,7 +51,7 @@ public extension UIScrollView {
     ///   - action: the action performed when released
     public func addPullToRefresh(_ view: RefreshView, option: PullOption, action: @escaping RefreshAction) {
         let direction = option.direction
-        if pullObserver(with: option.direction) != nil {
+        guard pullObserver(with: option.direction) == nil else {
             return
         }
 
@@ -84,7 +88,7 @@ public extension UIScrollView {
     }
 
     /// Stop refreshing. In most cases, you should stop the refresh manually.
-    public func stopRefresh(_ direction: PullDirection = .down, animated: Bool = true, scrollToOriginalPosition: Bool = true) {
+    public func stopRefresh(_ direction: PullDirection, animated: Bool = true, scrollToOriginalPosition: Bool = true) {
         pullObserver(with: direction)?.stopAnimating(animated: animated, scrollToOriginalPosition: scrollToOriginalPosition)
     }
 

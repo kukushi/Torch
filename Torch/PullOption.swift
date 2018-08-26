@@ -34,5 +34,6 @@ public struct PullOption {
     public var startBeforeReachingBottom = false
     public var startBeforeReachingBottomOffset: CGFloat = 0
 
+    // Make the initializer public
     public init() {}
 }
