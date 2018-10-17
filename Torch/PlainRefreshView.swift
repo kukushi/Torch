@@ -22,11 +22,11 @@ open class PlainRefreshView: UIView {
     fileprivate let layerLoader: CAShapeLayer = {
         let layer = CAShapeLayer()
         layer.strokeColor = UIColor.red.cgColor
-        layer.lineCap = kCALineCapRound
+        layer.lineCap = CAShapeLayerLineCap.round
         layer.fillColor = UIColor.clear.cgColor
         layer.lineWidth = 3
         layer.strokeEnd = 0.0
-        layer.lineCap = kCALineCapRound
+        layer.lineCap = CAShapeLayerLineCap.round
         return layer
     }()
 
