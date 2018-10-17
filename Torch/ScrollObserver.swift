@@ -44,10 +44,6 @@ class ScrollObserver: NSObject {
                 return
             }
             stateChanged(from: oldValue, to: state)
-
-            #if DEBUG
-            print("[Refresher]: Change to state: \(state)")
-            #endif
         }
     }
 
@@ -184,10 +180,6 @@ class ScrollObserver: NSObject {
                 state != .refreshing &&
                 leastRefreshingHeight != scrollView.contentSize.height {
                 if bottfomOffset > -option.startBeforeReachingBottomOffset {
-                    #if DEBUG
-                    print("[Refresher]: Strat refreshing automatically.")
-                    #endif
-
                     leastRefreshingHeight = scrollView.contentSize.height
                     startAnimating()
                 }
