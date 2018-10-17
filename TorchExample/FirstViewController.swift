@@ -47,7 +47,7 @@ class FirstViewController: UIViewController {
             OperationQueue().addOperation {
                 sleep(3)
                 OperationQueue.main.addOperation {
-                    scrollView.stopRefresh()
+                    scrollView.stopRefresh(.down)
                 }
             }
         })

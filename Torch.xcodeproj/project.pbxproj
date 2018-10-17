@@ -342,7 +342,7 @@
 					523C8CD51AC953610068E3C7 = {
 						CreatedOnToolsVersion = 6.3;
 						DevelopmentTeam = ATTGF74X8E;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = "";
 					};
 					523C8CE01AC953610068E3C7 = {
 						CreatedOnToolsVersion = 6.3;
@@ -352,12 +352,12 @@
 					523C8D291AC960630068E3C7 = {
 						CreatedOnToolsVersion = 6.3;
 						DevelopmentTeam = U6N93T3598;
-						LastSwiftMigration = 0930;
+						LastSwiftMigration = "";
 					};
 					523C8D3F1AC960630068E3C7 = {
 						CreatedOnToolsVersion = 6.3;
 						DevelopmentTeam = U6N93T3598;
-						LastSwiftMigration = 0930;
+						LastSwiftMigration = "";
 						TestTargetID = 523C8D291AC960630068E3C7;
 					};
 				};
