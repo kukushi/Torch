@@ -10,6 +10,7 @@ import UIKit
 
 class PullContainerView: UIView {
     var observer: ScrollObserver?
+    private var isObserving = false
 
     open override func willMove(toSuperview newSuperview: UIView?) {
         super.willMove(toSuperview: newSuperview)
@@ -19,10 +20,13 @@ class PullContainerView: UIView {
         }
     }
 
-    override func didMoveToSuperview() {
-        super.didMoveToSuperview()
+    override func layoutSubviews() {
+        super.layoutSubviews()
 
-        observer?.startObserving()
+        if !isObserving {
+            isObserving = true
+            observer?.startObserving()
+        }
     }
 
 }
