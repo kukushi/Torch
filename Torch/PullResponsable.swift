@@ -9,6 +9,8 @@
 import CoreGraphics
 
 public protocol PullResponsable: class {
+    func pullToRefreshAnimationDidPause(_ view: RefreshView, direction: PullDirection)
+    func pullToRefreshAnimationDidResume(_ view: RefreshView, direction: PullDirection)
     func pullToRefreshAnimationDidStart(_ view: RefreshView, direction: PullDirection)
     func pullToRefreshAnimationDidEnd(_ view: RefreshView, direction: PullDirection)
     func pullToRefreshAnimationDidFinished(_ view: RefreshView, direction: PullDirection)

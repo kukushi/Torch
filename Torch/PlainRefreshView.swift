@@ -19,6 +19,15 @@ open class PlainRefreshView: UIView {
         }
     }
 
+    private var rotationAnimation: CABasicAnimation {
+        let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation")
+        rotationAnimation.fromValue = 0.0
+        rotationAnimation.toValue = Float(Double.pi * 2.0)
+        rotationAnimation.duration = 1
+        rotationAnimation.repeatCount = HUGE
+        return rotationAnimation
+    }
+
     fileprivate let layerLoader: CAShapeLayer = {
         let layer = CAShapeLayer()
         layer.strokeColor = UIColor.red.cgColor
@@ -76,13 +85,18 @@ extension PlainRefreshView: PullResponsable {
         layerLoader.strokeStart = 0.2
         layerLoader.strokeEnd = 1
 
-        let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation")
-        rotationAnimation.fromValue = 0.0
-        rotationAnimation.toValue = Float(Double.pi * 2.0)
-        rotationAnimation.duration = 1
-        rotationAnimation.repeatCount = HUGE
+        layer.add(rotationAnimation, forKey: "rotating")
+    }
 
-        layer.add(rotationAnimation, forKey: "")
+    public func pullToRefreshAnimationDidPause(_ view: RefreshView, direction: PullDirection) {
+        // all animation are removed from the layer when app enter background or moving to nil windows
+        layer.removeAllAnimations()
+        layer.pauseAnimations()
+    }
+
+    public func pullToRefreshAnimationDidResume(_ view: RefreshView, direction: PullDirection) {
+        layer.add(rotationAnimation, forKey: "rotating")
+        layer.resumeAnimations()
     }
 
     public func pullToRefresh(_ view: RefreshView, progressDidChange progress: CGFloat, direction: PullDirection) {
@@ -92,7 +106,6 @@ extension PlainRefreshView: PullResponsable {
     }
 
     public func pullToRefreshAnimationDidEnd(_ view: RefreshView, direction: PullDirection) {
-        layerLoader.removeAllAnimations()
         layer.removeAllAnimations()
     }
 

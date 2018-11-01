@@ -17,6 +17,18 @@ class PullContainerView: UIView {
 
         if newSuperview == nil {
             observer?.stopObserving()
+            unobserveAppState()
+        }
+    }
+
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+
+        // Handle view controller switching
+        if window == nil {
+            observer?.pauseAnimation()
+        } else {
+            observer?.resumeAnimation()
         }
     }
 
@@ -26,7 +38,34 @@ class PullContainerView: UIView {
         if !isObserving {
             isObserving = true
             observer?.startObserving()
+            observingAppState()
         }
+    }
+
+    // MARK: Background & Foreground
+
+    private func unobserveAppState() {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    private func observingAppState() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(pauseAnimation),
+                                               name: UIApplication.didEnterBackgroundNotification,
+                                               object: nil)
+
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(resumeAnimation),
+                                               name: UIApplication.willEnterForegroundNotification,
+                                               object: nil)
+    }
+
+    @objc func pauseAnimation() {
+        observer?.pauseAnimation()
+    }
+
+    @objc func resumeAnimation() {
+        observer?.resumeAnimation()
     }
 
 }

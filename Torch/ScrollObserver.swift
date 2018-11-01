@@ -210,12 +210,12 @@ class ScrollObserver: NSObject {
         }
     }
 
-    // MARK: 
-
     func stateChanged(from oldState: PullState, to state: PullState) {
         guard let refreshView = refreshView else { return }
         refreshView.pullToRefresh(refreshView, stateDidChange: state, direction: direction)
     }
+
+    // MARK: Animation
 
     func processAnimatingAndState(_ process: CGFloat) {
         state = process < 1 ? .pulling : .readyToRelease
@@ -224,7 +224,21 @@ class ScrollObserver: NSObject {
         refreshView.pullToRefresh(refreshView, progressDidChange: process, direction: direction)
     }
 
-    func startAnimating(animated: Bool = true) {
+    open func pauseAnimation() {
+        guard let refreshView = self.refreshView else {
+            return
+        }
+        refreshView.pullToRefreshAnimationDidPause(refreshView, direction: direction)
+    }
+
+    open func resumeAnimation() {
+        guard let refreshView = self.refreshView else {
+            return
+        }
+        refreshView.pullToRefreshAnimationDidResume(refreshView, direction: direction)
+    }
+
+    open func startAnimating(animated: Bool = true) {
         guard state != .refreshing else { return }
 
         state = .refreshing

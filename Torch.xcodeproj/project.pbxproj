@@ -22,6 +22,7 @@
 		870490121CF1E573002D40CE /* Torch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 523C8CD61AC953610068E3C7 /* Torch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		871CC5EF21131AE600519007 /* PullOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871CC5EE21131AE600519007 /* PullOption.swift */; };
 		872F58A920D509F600122803 /* RefreshFeedbackGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872F58A820D509F600122803 /* RefreshFeedbackGenerator.swift */; };
+		87327318218B343C0031F449 /* CALayer+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87327317218B343C0031F449 /* CALayer+Animation.swift */; };
 		879CF1B121134063000EF117 /* DetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 879CF1B021134063000EF117 /* DetailTableViewController.swift */; };
 		87A82D032112BF3E00969296 /* PullResponsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A82D022112BF3E00969296 /* PullResponsable.swift */; };
 		87A82D062112C08700969296 /* PullContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A82D052112C08700969296 /* PullContainerView.swift */; };
@@ -88,6 +89,7 @@
 		523C8D461AC960630068E3C7 /* TorchExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorchExampleTests.swift; sourceTree = "<group>"; };
 		871CC5EE21131AE600519007 /* PullOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullOption.swift; sourceTree = "<group>"; };
 		872F58A820D509F600122803 /* RefreshFeedbackGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshFeedbackGenerator.swift; sourceTree = "<group>"; };
+		87327317218B343C0031F449 /* CALayer+Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Animation.swift"; sourceTree = "<group>"; };
 		879CF1B021134063000EF117 /* DetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailTableViewController.swift; sourceTree = "<group>"; };
 		87A82D022112BF3E00969296 /* PullResponsable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullResponsable.swift; sourceTree = "<group>"; };
 		87A82D052112C08700969296 /* PullContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullContainerView.swift; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 				87A82D022112BF3E00969296 /* PullResponsable.swift */,
 				87A82D052112C08700969296 /* PullContainerView.swift */,
 				87B238451C9D8F650063FB44 /* PlainRefreshView.swift */,
+				87327317218B343C0031F449 /* CALayer+Animation.swift */,
 				87A82D042112BF9B00969296 /* Features */,
 				523C8CD91AC953610068E3C7 /* Supporting Files */,
 			);
@@ -449,6 +452,7 @@
 				872F58A920D509F600122803 /* RefreshFeedbackGenerator.swift in Sources */,
 				87A82D032112BF3E00969296 /* PullResponsable.swift in Sources */,
 				871CC5EF21131AE600519007 /* PullOption.swift in Sources */,
+				87327318218B343C0031F449 /* CALayer+Animation.swift in Sources */,
 				87B238441C9D8C150063FB44 /* ScrollObserver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -40,7 +40,7 @@ class SecondViewController: UIViewController {
             OperationQueue().addOperation {
                 let newRows = arc4random() % 2 == 0 ? 3 : 0
                 self.count += newRows
-                sleep(2)
+                sleep(200)
                 OperationQueue.main.addOperation {
                     if newRows != 0 {
                         let cellNumber = self.tableView.numberOfRows(inSection: 0)

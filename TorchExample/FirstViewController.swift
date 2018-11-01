@@ -32,8 +32,8 @@ class FirstViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        addPullToRefresher()
-        addPullUpToRefresher()
+//        addPullToRefresher()
+//        addPullUpToRefresher()
     }
 
     private func addPullToRefresher() {
