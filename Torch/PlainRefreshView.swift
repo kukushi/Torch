@@ -10,6 +10,8 @@ import UIKit
 
 open class PlainRefreshView: UIView {
 
+    private var isAnimating = false
+
     open var lineColor: UIColor {
         set {
             layerLoader.strokeColor = newValue.cgColor
@@ -85,18 +87,24 @@ extension PlainRefreshView: PullResponsable {
         layerLoader.strokeStart = 0.2
         layerLoader.strokeEnd = 1
 
+        isAnimating = true
         layer.add(rotationAnimation, forKey: "rotating")
     }
 
     public func pullToRefreshAnimationDidPause(_ view: RefreshView, direction: PullDirection) {
         // all animation are removed from the layer when app enter background or moving to nil windows
         layer.removeAllAnimations()
-        layer.pauseAnimations()
+
+        if isAnimating {
+            layer.pauseAnimations()
+        }
     }
 
     public func pullToRefreshAnimationDidResume(_ view: RefreshView, direction: PullDirection) {
-        layer.add(rotationAnimation, forKey: "rotating")
-        layer.resumeAnimations()
+        if isAnimating {
+            layer.add(rotationAnimation, forKey: "rotating")
+            layer.resumeAnimations()
+        }
     }
 
     public func pullToRefresh(_ view: RefreshView, progressDidChange progress: CGFloat, direction: PullDirection) {
@@ -107,6 +115,7 @@ extension PlainRefreshView: PullResponsable {
 
     public func pullToRefreshAnimationDidEnd(_ view: RefreshView, direction: PullDirection) {
         layer.removeAllAnimations()
+        isAnimating = false
     }
 
     public func pullToRefreshAnimationDidFinished(_ view: RefreshView, direction: PullDirection) {
