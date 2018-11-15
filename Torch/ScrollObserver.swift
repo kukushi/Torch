@@ -299,16 +299,27 @@ class ScrollObserver: NSObject {
             }
         }
 
-        if animated {
-            UIView.animate(withDuration: 0.4, animations: updateClosure) { (_) in
-                guard let refreshView = self.refreshView else {
-                    return
+        let actionClosure = {
+            if animated {
+                UIView.animate(withDuration: 0.4, animations: updateClosure) { (_) in
+                    guard let refreshView = self.refreshView else {
+                        return
+                    }
+                    refreshView.pullToRefreshAnimationDidFinished(refreshView, direction: self.direction)
                 }
+            } else {
+                updateClosure()
                 refreshView.pullToRefreshAnimationDidFinished(refreshView, direction: self.direction)
             }
+        }
+
+        if scrollToOriginalPosition {
+            // Make sure the animation run after the table view reloading
+            DispatchQueue.main.async {
+                actionClosure()
+            }
         } else {
-            updateClosure()
-            refreshView.pullToRefreshAnimationDidFinished(refreshView, direction: direction)
+            actionClosure()
         }
     }
 }

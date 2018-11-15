@@ -11,6 +11,8 @@ import Torch
 
 struct AddtionalPullOption {
     var addCount: Int
+    var scrollToOriginalPosition: Bool
+    var shouldAnimateStop: Bool
 }
 
 class OptionViewController: UITableViewController {
@@ -19,6 +21,8 @@ class OptionViewController: UITableViewController {
     @IBOutlet weak var startsAutomaticallySwitch: UISwitch!
     @IBOutlet weak var keepOriginalFeedbackSwitch: UISwitch!
     @IBOutlet weak var refreshWithoutNewDataSwitch: UISwitch!
+    @IBOutlet weak var scrollToOriginalPosition: UISwitch!
+    @IBOutlet weak var animatedStopSwitch: UISwitch!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,10 +42,12 @@ class OptionViewController: UITableViewController {
             pullOption.startBeforeReachingBottomOffset = 200
 
             let newCount = refreshWithoutNewDataSwitch.isOn ? 0 : 3
-            var additionalOption = AddtionalPullOption(addCount: newCount)
+            let additionalOption = AddtionalPullOption(addCount: newCount,
+                                                       scrollToOriginalPosition: scrollToOriginalPosition.isOn,
+                                                       shouldAnimateStop: animatedStopSwitch.isOn)
 
             detailViewController.option = pullOption
-            detailViewController.addtionalOption = additionalOption
+            detailViewController.additionalOption = additionalOption
         }
     }
 }

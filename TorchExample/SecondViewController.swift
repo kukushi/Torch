@@ -42,13 +42,12 @@ class SecondViewController: UIViewController {
                 self.count += newRows
                 sleep(2)
                 OperationQueue.main.addOperation {
+                    scrollView.stopRefresh(.up, scrollToOriginalPosition: newRows == 0 ? true : false)
                     if newRows != 0 {
                         let cellNumber = self.tableView.numberOfRows(inSection: 0)
                         let addedIndexs = (cellNumber..<(cellNumber + newRows)).map { IndexPath(row: $0, section: 0) }
                         self.tableView.insertRows(at: addedIndexs, with: .none)
                     }
-
-                    scrollView.stopRefresh(.up, scrollToOriginalPosition: newRows == 0 ? true : false)
                 }
             }
         })

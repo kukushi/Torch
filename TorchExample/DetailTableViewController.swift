@@ -11,6 +11,9 @@ import Torch
 
 class DetailTableViewController: UITableViewController {
 
+    var option: PullOption!
+    var additionalOption: AddtionalPullOption!
+
     var count = 20
 
     override func viewDidLoad() {
@@ -24,43 +27,25 @@ class DetailTableViewController: UITableViewController {
         super.viewDidAppear(animated)
 
         addPullToRefresher()
-        addPullUpToRefresher()
     }
 
     private func addPullToRefresher() {
         let refreshView = PlainRefreshView()
         refreshView.lineColor = UIColor(red: 1.00, green: 0.80, blue: 0.00, alpha: 1.00)
 
-        var option = PullOption()
-        option.topPadding = 20
-
         tableView.addPullToRefresh(refreshView, option: option, action: { (scrollView) in
             OperationQueue().addOperation {
-                sleep(3)
+                sleep(2)
+                let newCount = self.count + self.additionalOption.addCount
                 OperationQueue.main.addOperation {
-                    scrollView.stopRefresh(.down)
-                }
-            }
-        })
-    }
-
-    private func addPullUpToRefresher() {
-        let refreshView = PlainRefreshView()
-        refreshView.lineColor = UIColor(red: 1.00, green: 0.80, blue: 0.00, alpha: 1.00)
-
-        var option = PullOption()
-        option.direction = .up
-        option.enableTapticFeedback = true
-        option.startBeforeReachingBottom = true
-        option.startBeforeReachingBottomOffset = 30
-
-        tableView.addPullToRefresh(refreshView, option: option, action: {[unowned self] (scrollView) in
-            OperationQueue().addOperation {
-                self.count += arc4random() % 2 == 0 ? 3 : 0
-                sleep(3)
-                OperationQueue.main.addOperation {
-                    self.tableView.reloadData()
-                    scrollView.stopRefresh(.up, scrollToOriginalPosition: false)
+                    if self.additionalOption.addCount > 0 {
+                        let insertedIndexes = (self.count..<newCount).map { IndexPath(item: $0, section: 0) }
+                        self.count = newCount
+                        self.tableView.insertRows(at: insertedIndexes, with: .none)
+                    }
+                    scrollView.stopRefresh(self.option.direction,
+                                           animated: self.additionalOption.shouldAnimateStop,
+                                           scrollToOriginalPosition: self.additionalOption.scrollToOriginalPosition)
                 }
             }
         })
@@ -74,5 +59,9 @@ class DetailTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return count
+    }
+
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 44
     }
 }
