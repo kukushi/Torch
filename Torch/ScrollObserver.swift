@@ -313,7 +313,7 @@ class ScrollObserver: NSObject {
             }
         }
 
-        if scrollToOriginalPosition {
+        if !scrollToOriginalPosition {
             // Make sure the animation run after the table view reloading
             DispatchQueue.main.async {
                 actionClosure()
