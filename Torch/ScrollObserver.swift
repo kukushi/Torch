@@ -177,6 +177,8 @@ class ScrollObserver: NSObject {
 
             // Starts animation automatically and remember this location to prevent infinite animation
             if option.startBeforeReachingBottom &&
+                // Only trigger when user content is dragged
+                (scrollView.isDecelerating && scrollView.isDragging) &&
                 state != .refreshing &&
                 leastRefreshingHeight != scrollView.contentSize.height {
                 if bottfomOffset > -option.startBeforeReachingBottomOffset {
