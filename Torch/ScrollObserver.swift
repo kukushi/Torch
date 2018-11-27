@@ -103,7 +103,7 @@ class ScrollObserver: NSObject {
         }
 
         guard containerView?.superview is UIScrollView else {
-            fatalError("Refreher can only be used in UIScrollView and it's subclasses.")
+            fatalError("ScrollObserver can only be used in UIScrollView and it's subclasses.")
         }
 
         observingContentOffsetToken = scrollView.observe(\.contentOffset,
@@ -173,7 +173,7 @@ class ScrollObserver: NSObject {
             }
 
             let offset = scrollView.contentOffset.y - appropriateContentInset.bottom
-            let bottfomOffset = containerHeight + offset - contentHeight
+            let bottomOffset = containerHeight + offset - contentHeight
 
             // Starts animation automatically and remember this location to prevent infinite animation
             if option.startBeforeReachingBottom &&
@@ -181,7 +181,7 @@ class ScrollObserver: NSObject {
                 (scrollView.isDecelerating && scrollView.isDragging) &&
                 state != .refreshing &&
                 leastRefreshingHeight != scrollView.contentSize.height {
-                if bottfomOffset > -option.startBeforeReachingBottomOffset {
+                if bottomOffset > -option.startBeforeReachingBottomOffset {
                     leastRefreshingHeight = scrollView.contentSize.height
                     startAnimating()
                 }
@@ -189,14 +189,14 @@ class ScrollObserver: NSObject {
             }
 
             if scrollView.isDragging {
-                if bottfomOffset > 0 {
-                    let process = bottfomOffset / viewHeight
+                if bottomOffset > 0 {
+                    let process = bottomOffset / viewHeight
                     processAnimatingAndState(process)
                 }
             } else {
-                if bottfomOffset >= viewHeight {
+                if bottomOffset >= viewHeight {
                     startAnimating()
-                } else if bottfomOffset > 0 && state == .pulling {
+                } else if bottomOffset > 0 && state == .pulling {
                     state = .cancel
                     // Mark the refresh as done
                     state = .done

@@ -9,7 +9,7 @@
 import UIKit
 
 private var pullDownToRefreshViewKey = 0
-private var pullUpToRefershViewKey = 1
+private var pullUpToRefreshViewKey = 1
 
 public extension UIScrollView {
     private var pullDownObserver: ScrollObserver? {
@@ -23,10 +23,10 @@ public extension UIScrollView {
 
     private var pullUpObserver: ScrollObserver? {
         get {
-            return objc_getAssociatedObject(self, &pullUpToRefershViewKey) as? ScrollObserver
+            return objc_getAssociatedObject(self, &pullUpToRefreshViewKey) as? ScrollObserver
         }
         set {
-            objc_setAssociatedObject(self, &pullUpToRefershViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, &pullUpToRefreshViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 

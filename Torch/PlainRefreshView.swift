@@ -41,21 +41,21 @@ open class PlainRefreshView: UIView {
         return layer
     }()
 
-    // MARK: Initalization
+    // MARK: Initialization
 
     override public init(frame: CGRect) {
         super.init(frame: frame)
 
-        initalize()
+        initialize()
     }
 
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
 
-        initalize()
+        initialize()
     }
 
-    fileprivate func initalize() {
+    fileprivate func initialize() {
         layer.addSublayer(layerLoader)
     }
 
