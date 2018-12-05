@@ -22,6 +22,7 @@
 		871CC5EF21131AE600519007 /* PullOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871CC5EE21131AE600519007 /* PullOption.swift */; };
 		872F58A920D509F600122803 /* RefreshFeedbackGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872F58A820D509F600122803 /* RefreshFeedbackGenerator.swift */; };
 		87327318218B343C0031F449 /* CALayer+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87327317218B343C0031F449 /* CALayer+Animation.swift */; };
+		8782B98421B81D4D00220685 /* TorchControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8782B98321B81D4D00220685 /* TorchControl.swift */; };
 		879CF1B121134063000EF117 /* DetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 879CF1B021134063000EF117 /* DetailTableViewController.swift */; };
 		87A82D032112BF3E00969296 /* PullResponsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A82D022112BF3E00969296 /* PullResponsable.swift */; };
 		87A82D062112C08700969296 /* PullContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A82D052112C08700969296 /* PullContainerView.swift */; };
@@ -88,6 +89,7 @@
 		871CC5EE21131AE600519007 /* PullOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullOption.swift; sourceTree = "<group>"; };
 		872F58A820D509F600122803 /* RefreshFeedbackGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshFeedbackGenerator.swift; sourceTree = "<group>"; };
 		87327317218B343C0031F449 /* CALayer+Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Animation.swift"; sourceTree = "<group>"; };
+		8782B98321B81D4D00220685 /* TorchControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorchControl.swift; sourceTree = "<group>"; };
 		879CF1B021134063000EF117 /* DetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailTableViewController.swift; sourceTree = "<group>"; };
 		87A82D022112BF3E00969296 /* PullResponsable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullResponsable.swift; sourceTree = "<group>"; };
 		87A82D052112C08700969296 /* PullContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullContainerView.swift; sourceTree = "<group>"; };
@@ -155,8 +157,9 @@
 			isa = PBXGroup;
 			children = (
 				523C8CDB1AC953610068E3C7 /* Torch.h */,
-				871CC5EE21131AE600519007 /* PullOption.swift */,
 				523C8CF21AC953720068E3C7 /* UIScrollView+Torch.swift */,
+				871CC5EE21131AE600519007 /* PullOption.swift */,
+				8782B98321B81D4D00220685 /* TorchControl.swift */,
 				87B238431C9D8C150063FB44 /* ScrollObserver.swift */,
 				87A82D022112BF3E00969296 /* PullResponsable.swift */,
 				87A82D052112C08700969296 /* PullContainerView.swift */,
@@ -444,6 +447,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				523C8CF31AC953720068E3C7 /* UIScrollView+Torch.swift in Sources */,
+				8782B98421B81D4D00220685 /* TorchControl.swift in Sources */,
 				87A82D062112C08700969296 /* PullContainerView.swift in Sources */,
 				87B238461C9D8F650063FB44 /* PlainRefreshView.swift in Sources */,
 				872F58A920D509F600122803 /* RefreshFeedbackGenerator.swift in Sources */,

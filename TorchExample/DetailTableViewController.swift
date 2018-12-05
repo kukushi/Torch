@@ -33,7 +33,7 @@ class DetailTableViewController: UITableViewController {
         let refreshView = PlainRefreshView()
         refreshView.lineColor = UIColor(red: 1.00, green: 0.80, blue: 0.00, alpha: 1.00)
 
-        tableView.addPullToRefresh(refreshView, option: option, action: { (scrollView) in
+        tableView.tr.addPullToRefresh(refreshView, option: option, action: { (scrollView) in
             OperationQueue().addOperation {
                 sleep(2)
                 let newCount = self.count + self.additionalOption.addCount
@@ -43,7 +43,7 @@ class DetailTableViewController: UITableViewController {
                         self.count = newCount
                         self.tableView.insertRows(at: insertedIndexes, with: .none)
                     }
-                    scrollView.stopRefresh(self.option.direction,
+                    scrollView.tr.stopRefresh(self.option.direction,
                                            animated: self.additionalOption.shouldAnimateStop,
                                            scrollToOriginalPosition: self.additionalOption.scrollToOriginalPosition)
                 }

@@ -12,6 +12,8 @@ class ScrollObserver: NSObject {
     let option: PullOption
     let action: RefreshAction
 
+    var isEnabled: Bool = true
+
     weak var refreshView: RefreshView?
     weak var containerView: UIView?
 
@@ -126,6 +128,10 @@ class ScrollObserver: NSObject {
     // MARK: KVO
 
     func observingContentOffsetChanges() {
+        guard isEnabled else {
+            return
+        }
+
         let viewHeight = pullingHeight
 
         guard state != .refreshing else {
@@ -206,6 +212,10 @@ class ScrollObserver: NSObject {
     }
 
     func observingContentSizeChanges() {
+        guard isEnabled else {
+            return
+        }
+
         if !isPullingDown {
             topConstraint?.constant = scrollView.contentSize.height
             scrollView.layoutIfNeeded()
