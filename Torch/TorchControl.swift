@@ -23,6 +23,10 @@ public class TorchControl {
         pullObserver(with: direction)?.isEnabled = enabled
     }
 
+    public func isEnabled(for direction: PullDirection) -> Bool {
+        return pullObserver(with: direction)?.isEnabled ?? false
+    }
+
     init(baseView: UIScrollView) {
         self.baseView = baseView
     }
