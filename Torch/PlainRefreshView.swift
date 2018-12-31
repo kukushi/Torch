@@ -118,7 +118,14 @@ extension PlainRefreshView: PullResponsable {
         isAnimating = false
     }
 
-    public func pullToRefreshAnimationDidFinished(_ view: RefreshView, direction: PullDirection) {
-        layerLoader.strokeEnd = 0
+    public func pullToRefreshAnimationDidFinished(_ view: RefreshView, direction: PullDirection, animated: Bool) {
+        if animated {
+            layerLoader.strokeEnd = 0
+        } else {
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
+            layerLoader.strokeEnd = 0
+            CATransaction.commit()
+        }
     }
 }

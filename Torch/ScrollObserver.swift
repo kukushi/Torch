@@ -21,7 +21,11 @@ class ScrollObserver: NSObject {
 
     var topConstraint: NSLayoutConstraint?
 
-    private var leastRefreshingHeight: CGFloat = 0
+    // Keep track of the last refreshing height, used to prevent infinite automatic refreshing
+    private var lastRefreshingHeight: CGFloat = 0
+
+    // When the content height significant changed, disable the bottom refreshing until it go back to normal region
+    private var contentHeightSignificantShrinked = false
 
     private var direction: PullDirection {
         return option.direction
@@ -118,9 +122,12 @@ class ScrollObserver: NSObject {
 
         if !isPullingDown {
             observingContentSizeToken = scrollView.observe(\.contentSize,
-                                                           options: .new) { [weak self] (_, _) in
-                guard let strongSelf = self else { return }
-                strongSelf.observingContentSizeChanges()
+                                                           options: [.old, .new]) { [weak self] (_, change) in
+                                                            guard let self = self else { return }
+                                                            if let newValue = change.newValue, let oldValue = change.oldValue {
+                                                                self.contentHeightSignificantShrinked = (oldValue.height - newValue.height) > self.pullingHeight
+                                                            }
+                                                            self.observingContentSizeChanges()
             }
         }
     }
@@ -181,14 +188,23 @@ class ScrollObserver: NSObject {
             let offset = scrollView.contentOffset.y - appropriateContentInset.bottom
             let bottomOffset = containerHeight + offset - contentHeight
 
+            // Ignore offset change when height shrinked
+            if contentHeightSignificantShrinked {
+                if bottomOffset >= viewHeight {
+                    return
+                } else {
+                    contentHeightSignificantShrinked = false
+                }
+            }
+
             // Starts animation automatically and remember this location to prevent infinite animation
             if option.startBeforeReachingBottom &&
                 // Only trigger when user content is dragged
                 (scrollView.isDecelerating && scrollView.isDragging) &&
                 state != .refreshing &&
-                leastRefreshingHeight != scrollView.contentSize.height {
+                lastRefreshingHeight != scrollView.contentSize.height {
                 if bottomOffset > -option.startBeforeReachingBottomOffset {
-                    leastRefreshingHeight = scrollView.contentSize.height
+                    lastRefreshingHeight = scrollView.contentSize.height
                     startAnimating()
                 }
                 return
@@ -295,8 +311,13 @@ class ScrollObserver: NSObject {
 
         refreshView.pullToRefreshAnimationDidEnd(refreshView, direction: direction)
 
+        let contentOffsetBeforeAnimation = scrollView.contentOffset
+        let contentInsetBeforeAnimation = scrollView.contentInset
+
         let updateClosure = {
-            if scrollToOriginalPosition {
+            // Restore to original position only when offset is unchanged
+            if contentOffsetBeforeAnimation == self.scrollView.contentOffset &&
+                scrollToOriginalPosition {
                 if self.isPullingDown {
                     self.scrollView.contentOffset.y = self.originalContentOffsetY
                 } else {
@@ -304,10 +325,13 @@ class ScrollObserver: NSObject {
                 }
             }
 
-            if self.isPullingDown {
-                self.scrollView.contentInset.top -= self.pullingHeight
-            } else {
-                self.scrollView.contentInset.bottom -= self.pullingHeight
+            // Restore to original content inset only when offset is unchanged
+            if contentInsetBeforeAnimation == self.scrollView.contentInset {
+                if self.isPullingDown {
+                    self.scrollView.contentInset.top -= self.pullingHeight
+                } else {
+                    self.scrollView.contentInset.bottom -= self.pullingHeight
+                }
             }
         }
 
@@ -317,11 +341,11 @@ class ScrollObserver: NSObject {
                     guard let refreshView = self.refreshView else {
                         return
                     }
-                    refreshView.pullToRefreshAnimationDidFinished(refreshView, direction: self.direction)
+                    refreshView.pullToRefreshAnimationDidFinished(refreshView, direction: self.direction, animated: animated)
                 }
             } else {
                 updateClosure()
-                refreshView.pullToRefreshAnimationDidFinished(refreshView, direction: self.direction)
+                refreshView.pullToRefreshAnimationDidFinished(refreshView, direction: self.direction, animated: false)
             }
         }
 

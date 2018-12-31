@@ -13,7 +13,7 @@ public protocol PullResponsable: class {
     func pullToRefreshAnimationDidResume(_ view: RefreshView, direction: PullDirection)
     func pullToRefreshAnimationDidStart(_ view: RefreshView, direction: PullDirection)
     func pullToRefreshAnimationDidEnd(_ view: RefreshView, direction: PullDirection)
-    func pullToRefreshAnimationDidFinished(_ view: RefreshView, direction: PullDirection)
+    func pullToRefreshAnimationDidFinished(_ view: RefreshView, direction: PullDirection, animated: Bool)
     func pullToRefresh(_ view: RefreshView, progressDidChange progress: CGFloat, direction: PullDirection)
     func pullToRefresh(_ view: RefreshView, stateDidChange state: PullState, direction: PullDirection)
 
@@ -23,7 +23,7 @@ public protocol PullResponsable: class {
 public extension PullResponsable {
     func pullToRefreshAnimationDidStart(_ view: RefreshView, direction: PullDirection) {}
     func pullToRefreshAnimationDidEnd(_ view: RefreshView, direction: PullDirection) {}
-    func pullToRefreshAnimationDidFinished(_ view: RefreshView, direction: PullDirection) {}
+    func pullToRefreshAnimationDidFinished(_ view: RefreshView, direction: PullDirection, animated: Bool) {}
     func pullToRefresh(_ view: RefreshView, progressDidChange progress: CGFloat, direction: PullDirection) {}
     func pullToRefresh(_ view: RefreshView, stateDidChange state: PullState, direction: PullDirection) {}
 }
