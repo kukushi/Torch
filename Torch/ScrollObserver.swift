@@ -27,6 +27,9 @@ class ScrollObserver: NSObject {
     // When the content height significant changed, disable the bottom refreshing until it go back to normal region
     private var contentHeightSignificantShrinked = false
 
+    var contentOffsetBeforeAnimationEnd: CGPoint?
+    var contentInsetBeforeAnimationEnd: UIEdgeInsets?
+
     private var direction: PullDirection {
         return option.direction
     }
@@ -279,6 +282,9 @@ class ScrollObserver: NSObject {
                 self.scrollView.contentInset.bottom += self.pullingHeight
                 self.scrollView.contentOffset.y += self.pullingHeight
             }
+
+            self.contentOffsetBeforeAnimationEnd = self.scrollView.contentOffset
+            self.contentInsetBeforeAnimationEnd = self.scrollView.contentInset
         }
 
         let completionClosure = { (completion: Bool) in
@@ -311,12 +317,9 @@ class ScrollObserver: NSObject {
 
         refreshView.pullToRefreshAnimationDidEnd(refreshView, direction: direction)
 
-        let contentOffsetBeforeAnimation = scrollView.contentOffset
-        let contentInsetBeforeAnimation = scrollView.contentInset
-
         let updateClosure = {
             // Restore to original position only when offset is unchanged
-            if contentOffsetBeforeAnimation == self.scrollView.contentOffset &&
+            if self.contentOffsetBeforeAnimationEnd == self.scrollView.contentOffset &&
                 scrollToOriginalPosition {
                 if self.isPullingDown {
                     self.scrollView.contentOffset.y = self.originalContentOffsetY
@@ -326,7 +329,7 @@ class ScrollObserver: NSObject {
             }
 
             // Restore to original content inset only when offset is unchanged
-            if contentInsetBeforeAnimation == self.scrollView.contentInset {
+            if self.contentInsetBeforeAnimationEnd == self.scrollView.contentInset {
                 if self.isPullingDown {
                     self.scrollView.contentInset.top -= self.pullingHeight
                 } else {
