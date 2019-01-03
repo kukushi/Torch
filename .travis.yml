@@ -1,6 +1,6 @@
 language: objective-c
 os: osx
-osx_image: xcode9.3
+osx_image: xcode10.1
 
 -before_install:
  - |
@@ -8,7 +8,7 @@ osx_image: xcode9.3
 script:
 - |
     set -o pipefail
-    xcodebuild clean test -project Torch.xcodeproj -scheme Torch -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.3.1' -enableCodeCoverage YES | bundle exec xcpretty
+    xcodebuild clean test -project Torch.xcodeproj -scheme Torch -destination 'platform=iOS Simulator,name=iPhone XR,OS=12.1' -enableCodeCoverage YES | bundle exec xcpretty
 after_success:
     - sleep 5
     - bash <(curl -s https://codecov.io/bash)

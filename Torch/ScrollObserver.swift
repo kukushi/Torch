@@ -124,13 +124,12 @@ class ScrollObserver: NSObject {
         originalContentOffsetY = scrollView.contentOffset.y
 
         if !isPullingDown {
-            observingContentSizeToken = scrollView.observe(\.contentSize,
-                                                           options: [.old, .new]) { [weak self] (_, change) in
-                                                            guard let self = self else { return }
-                                                            if let newValue = change.newValue, let oldValue = change.oldValue {
-                                                                self.contentHeightSignificantShrinked = (oldValue.height - newValue.height) > self.pullingHeight
-                                                            }
-                                                            self.observingContentSizeChanges()
+            observingContentSizeToken = scrollView.observe(\.contentSize, options: [.old, .new]) { [weak self] (_, change) in
+                guard let self = self else { return }
+                if let newValue = change.newValue, let oldValue = change.oldValue {
+                    self.contentHeightSignificantShrinked = (oldValue.height - newValue.height) > self.pullingHeight
+                }
+                self.observingContentSizeChanges()
             }
         }
     }
