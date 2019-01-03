@@ -2,13 +2,28 @@ language: objective-c
 os: osx
 osx_image: xcode10.1
 
+git:
+    depth: fals
+
+stages:
+    - name: tests
+    - name: deploy
+        if: branch =~ ^\d+\.\d+\.\d+$
+
 -before_install:
  - |
     gem install xcpretty -N --no-ri --no-rdoc
-script:
-- |
-    set -o pipefail
-    xcodebuild clean test -project Torch.xcodeproj -scheme Torch -destination 'platform=iOS Simulator,name=iPhone XR,OS=12.1' -enableCodeCoverage YES | bundle exec xcpretty
+
+- stage: deploy
+    script:
+    - |
+        set -o pipefail
+        xcodebuild clean test -project Torch.xcodeproj -scheme Torch -destination 'platform=iOS Simulator,name=iPhone XR,OS=12.1' -enableCodeCoverage YES | bundle exec xcpretty
+
+- stage: deploy
+    script: |
+            pod trunk push --verbose | ruby -e 'ARGF.each{ print "." }'
+
 after_success:
     - sleep 5
     - bash <(curl -s https://codecov.io/bash)
