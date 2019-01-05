@@ -14,7 +14,7 @@ stages:
  - |
     gem install xcpretty -N --no-ri --no-rdoc
 
-- stage: deploy
+- stage: tests
     script:
     - |
         set -o pipefail
