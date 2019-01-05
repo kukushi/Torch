@@ -127,7 +127,7 @@ class ScrollObserver: NSObject {
             observingContentSizeToken = scrollView.observe(\.contentSize, options: [.old, .new]) { [weak self] (_, change) in
                 guard let self = self else { return }
                 if let newValue = change.newValue, let oldValue = change.oldValue {
-                    self.contentHeightSignificantShrinked = (oldValue.height - newValue.height) > self.pullingHeight
+                    self.contentHeightSignificantShrinked = (oldValue.height - newValue.height) >= self.pullingHeight
                 }
                 self.observingContentSizeChanges()
             }
@@ -141,11 +141,11 @@ class ScrollObserver: NSObject {
             return
         }
 
-        let viewHeight = pullingHeight
-
         guard state != .refreshing else {
             return
         }
+
+        let viewHeight = pullingHeight
 
         switch direction {
         case .down:
