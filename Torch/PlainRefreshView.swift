@@ -17,6 +17,7 @@ open class PlainRefreshView: UIView {
             layerLoader.strokeColor = newValue.cgColor
         }
         get {
+            // swiftlint:disable:next force_unwrapping
             return UIColor(cgColor: layerLoader.strokeColor!)
         }
     }

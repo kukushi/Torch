@@ -1,10 +1,27 @@
 disabled_rules:
-   # Force case is handy with handing table view cell
-   - force_cast
-   - cyclomatic_complexity
+disabled_rules:
+   # TODO
    - function_body_length
+   # TODO
+   - cyclomatic_complexity
+   # TODO
+   - type_body_length
+   # WCDB Swift using nesting `Root`
+   - nesting 
+
+opt_in_rules:
+  - force_unwrapping
+  - implicitly_unwrapped_optional
+  - legacy_random
+  - overridden_super_call
+  - override_in_extension
+  - prohibited_super_call
+  - redundant_type_annotation
+  - static_operator
+  - toggle_bool
 
 excluded:
+  - TorchExample
   - Carthage
   - Pods
 

@@ -65,7 +65,10 @@ class ScrollObserver: NSObject {
     }
 
     var scrollView: UIScrollView {
-        return containerView?.superview as! UIScrollView
+        guard let parentScrollView = containerView?.superview as? UIScrollView else {
+            fatalError("ScrollObserver can only be used in UIScrollView and it's subclasses.")
+        }
+        return parentScrollView
     }
 
     init(refreshView: RefreshView, option: PullOption, action: @escaping RefreshAction) {

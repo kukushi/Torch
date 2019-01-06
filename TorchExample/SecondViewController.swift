@@ -38,7 +38,7 @@ class SecondViewController: UIViewController {
 
         tableView.addPullToRefresh(refreshView, option: option, action: { [unowned self] (scrollView) in
             OperationQueue().addOperation {
-                let newRows = arc4random() % 2 == 0 ? 3 : 0
+                let newRows = Bool.random() ? 3 : 0
                 self.count += newRows
                 sleep(2)
                 OperationQueue.main.addOperation {
@@ -57,7 +57,7 @@ class SecondViewController: UIViewController {
 
 extension SecondViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
         cell.textLabel?.text = "\((indexPath as NSIndexPath).row)"
         return cell
     }
