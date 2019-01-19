@@ -203,12 +203,11 @@ class ScrollObserver: NSObject {
             }
 
             // Starts animation automatically and remember this location to prevent infinite animation
-            if option.startBeforeReachingBottom &&
-                // Only trigger when user content is dragged
-                (scrollView.isDecelerating && scrollView.isDragging) &&
+            if option.shouldStartBeforeReachingBottom &&
                 state != .refreshing &&
                 lastRefreshingHeight != scrollView.contentSize.height {
-                if bottomOffset > -option.startBeforeReachingBottomOffset {
+                if bottomOffset > -option.startBeforeReachingBottomFactor * scrollView.contentSize.height {
+                    print("[Torch] Start refreshing because almost reaching the bottom")
                     lastRefreshingHeight = scrollView.contentSize.height
                     startAnimating()
                 }
@@ -225,7 +224,6 @@ class ScrollObserver: NSObject {
                     startAnimating()
                 } else if bottomOffset > 0 && state == .pulling {
                     state = .cancel
-                    // Mark the refresh as done
                     state = .done
                 }
             }

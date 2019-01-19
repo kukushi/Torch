@@ -38,10 +38,10 @@ class OptionViewController: UITableViewController {
             var pullOption = PullOption()
             pullOption.enableTapticFeedback = enableTapticFeedbackSwitch.isOn
             pullOption.direction =  pullDownSwitch.isOn ? .down : .up
-            pullOption.startBeforeReachingBottom = startsAutomaticallySwitch.isOn
-            pullOption.startBeforeReachingBottomOffset = 200
+            pullOption.shouldStartBeforeReachingBottom = startsAutomaticallySwitch.isOn
+            pullOption.startBeforeReachingBottomFactor = 0.1
 
-            let newCount = refreshWithoutNewDataSwitch.isOn ? 0 : 3
+            let newCount = refreshWithoutNewDataSwitch.isOn ? 0 : 50
             let additionalOption = AddtionalPullOption(addCount: newCount,
                                                        scrollToOriginalPosition: scrollToOriginalPosition.isOn,
                                                        shouldAnimateStop: animatedStopSwitch.isOn)

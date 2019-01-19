@@ -9,6 +9,12 @@
 import UIKit
 import Torch
 
+public func delay(_ delay: Double, closure:@escaping () -> Void) {
+    DispatchQueue.main.asyncAfter(
+        deadline: DispatchTime.now() + Double(Int64(delay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC),
+        execute: closure)
+}
+
 class DetailTableViewController: UITableViewController {
 
     var option: PullOption!
@@ -34,20 +40,18 @@ class DetailTableViewController: UITableViewController {
         refreshView.lineColor = UIColor(red: 1.00, green: 0.80, blue: 0.00, alpha: 1.00)
 
         tableView.tr.addPullToRefresh(refreshView, option: option, action: { (scrollView) in
-            OperationQueue().addOperation {
-                sleep(2)
+            delay(0.3, closure: {
+
                 let newCount = self.count + self.additionalOption.addCount
-                OperationQueue.main.addOperation {
-                    if self.additionalOption.addCount > 0 {
-                        let insertedIndexes = (self.count..<newCount).map { IndexPath(item: $0, section: 0) }
-                        self.count = newCount
-                        self.tableView.insertRows(at: insertedIndexes, with: .none)
-                    }
-                    scrollView.tr.stopRefresh(self.option.direction,
-                                           animated: self.additionalOption.shouldAnimateStop,
-                                           scrollToOriginalPosition: self.additionalOption.scrollToOriginalPosition)
+                if self.additionalOption.addCount > 0 {
+                    let insertedIndexes = (self.count..<newCount).map { IndexPath(item: $0, section: 0) }
+                    self.count = newCount
+                    self.tableView.insertRows(at: insertedIndexes, with: .none)
                 }
-            }
+                scrollView.tr.stopRefresh(self.option.direction,
+                                          animated: self.additionalOption.shouldAnimateStop,
+                                          scrollToOriginalPosition: self.additionalOption.scrollToOriginalPosition)
+            })
         })
     }
 

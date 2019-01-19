@@ -10,8 +10,10 @@ import UIKit
 
 public class TorchControl {
     private weak var baseView: UIScrollView?
+
     private var pullDownObserver: ScrollObserver?
     private var pullUpObserver: ScrollObserver?
+
     public var isEnabled: Bool = true {
         didSet {
             pullDownObserver?.isEnabled = isEnabled
