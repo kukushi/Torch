@@ -256,14 +256,14 @@ class ScrollObserver: NSObject {
     }
 
     open func pauseAnimation() {
-        guard let refreshView = self.refreshView else {
+        guard let refreshView = refreshView else {
             return
         }
         refreshView.pullToRefreshAnimationDidPause(refreshView, direction: direction)
     }
 
     open func resumeAnimation() {
-        guard let refreshView = self.refreshView else {
+        guard let refreshView = refreshView else {
             return
         }
         refreshView.pullToRefreshAnimationDidResume(refreshView, direction: direction)
@@ -274,7 +274,8 @@ class ScrollObserver: NSObject {
 
         state = .refreshing
 
-        let updateClosure = {
+        let updateClosure = { [weak self] in
+            guard let self = self else { return }
             if self.isPullingDown {
                 self.scrollView.contentInset.top += self.pullingHeight
                 self.scrollView.contentOffset.y = self.originalContentOffsetY - self.pullingHeight
@@ -287,7 +288,8 @@ class ScrollObserver: NSObject {
             self.contentInsetBeforeAnimationEnd = self.scrollView.contentInset
         }
 
-        let completionClosure = { (completion: Bool) in
+        let completionClosure = { [weak self] (completion: Bool) in
+            guard let self = self else { return }
             guard let refreshView = self.refreshView else {
                 return
             }
@@ -317,7 +319,9 @@ class ScrollObserver: NSObject {
 
         refreshView.pullToRefreshAnimationDidEnd(refreshView, direction: direction)
 
-        let updateClosure = {
+        // Don't hold self. Action don't need to be exeuted if the view is released.
+        let updateClosure = { [weak self] in
+            guard let self = self else { return }
             // Restore to original position only when offset is unchanged
             if self.contentOffsetBeforeAnimationEnd == self.scrollView.contentOffset &&
                 scrollToOriginalPosition {
@@ -338,9 +342,10 @@ class ScrollObserver: NSObject {
             }
         }
 
-        let actionClosure = {
+        let actionClosure = { [weak self] in
+            guard let self = self else { return }
             if animated {
-                UIView.animate(withDuration: 0.4, animations: updateClosure) { (_) in
+                UIView.animate(withDuration: 0.4, animations: updateClosure) { _ in
                     guard let refreshView = self.refreshView else {
                         return
                     }
