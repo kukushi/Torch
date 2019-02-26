@@ -120,8 +120,8 @@ class ScrollObserver: NSObject {
 
         observingContentOffsetToken = scrollView.observe(\.contentOffset,
                                                          options: .new) { [weak self] (_, _) in
-            guard let strongSelf = self else { return }
-            strongSelf.observingContentOffsetChanges()
+            guard let self = self else { return }
+            self.observingContentOffsetChanges()
         }
 
         originalContentOffsetY = scrollView.contentOffset.y
@@ -313,7 +313,7 @@ class ScrollObserver: NSObject {
 
         state = .done
 
-        guard let refreshView = self.refreshView else {
+        guard let refreshView = refreshView else {
             return
         }
 
