@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "Torch"
-  s.version      = "1.5.0"
+  s.version      = "1.5.1"
   s.summary      = "A lightweight Swift Pull to refresh control."
 
   s.description  = <<-DESC
