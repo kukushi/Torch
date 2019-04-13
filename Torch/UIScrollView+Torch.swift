@@ -12,7 +12,7 @@ private var torchKey = 0
 
 public extension UIScrollView {
     // swiftlint:disable:next identifier_name
-    public var tr: TorchControl {
+    var tr: TorchControl {
         if let control = objc_getAssociatedObject(self, &torchKey) as? TorchControl {
             return control
         } else {

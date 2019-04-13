@@ -8,18 +8,21 @@
 
 import QuartzCore
 
+// https://stackoverflow.com/questions/20946481/comprehend-pause-and-resume-animation-on-a-layer
 public extension CALayer {
     var isAnimationsPaused: Bool {
         return speed == 0.0
     }
 
     func pauseAnimations() {
-        if !isAnimationsPaused {
-            let currentTime = CACurrentMediaTime()
-            let pausedTime = convertTime(currentTime, from: nil)
-            speed = 0.0
-            timeOffset = pausedTime
+        guard !isAnimationsPaused else {
+            return
         }
+        
+        // Get layer's time space
+        let pausedTime = convertTime(CACurrentMediaTime(), from: nil)
+        speed = 0.0
+        timeOffset = pausedTime
     }
 
     func resumeAnimations() {
@@ -27,8 +30,8 @@ public extension CALayer {
         speed = 1.0
         timeOffset = 0.0
         beginTime = 0.0
-        let currentTime = CACurrentMediaTime()
-        let timeSincePause = convertTime(currentTime, from: nil) - pausedTime
+        
+        let timeSincePause = convertTime(CACurrentMediaTime(), from: nil) - pausedTime
         beginTime = timeSincePause
     }
 }

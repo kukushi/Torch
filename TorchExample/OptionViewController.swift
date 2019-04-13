@@ -27,6 +27,7 @@ class OptionViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        tableView.rowHeight = 44
         title = "Torch"
     }
 
