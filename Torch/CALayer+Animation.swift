@@ -18,7 +18,7 @@ public extension CALayer {
         guard !isAnimationsPaused else {
             return
         }
-        
+
         // Get layer's time space
         let pausedTime = convertTime(CACurrentMediaTime(), from: nil)
         speed = 0.0
@@ -30,7 +30,7 @@ public extension CALayer {
         speed = 1.0
         timeOffset = 0.0
         beginTime = 0.0
-        
+
         let timeSincePause = convertTime(CACurrentMediaTime(), from: nil) - pausedTime
         beginTime = timeSincePause
     }
