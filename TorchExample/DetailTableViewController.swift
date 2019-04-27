@@ -39,8 +39,9 @@ class DetailTableViewController: UITableViewController {
         let refreshView = PlainRefreshView()
         refreshView.lineColor = UIColor(red: 1.00, green: 0.80, blue: 0.00, alpha: 1.00)
 
-        tableView.tr.addPullToRefresh(refreshView, option: option, action: { (scrollView) in
-            delay(0.3, closure: {
+        tableView.tr.addPullToRefresh(refreshView, option: option, action: { [weak self] (scrollView) in
+            guard let self = self else { return }
+            delay(2, closure: {
 
                 let newCount = self.count + self.additionalOption.addCount
                 if self.additionalOption.addCount > 0 {
