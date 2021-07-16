@@ -8,7 +8,7 @@
 
 import CoreGraphics
 
-public protocol PullResponsable: class {
+public protocol PullResponsable: AnyObject {
     func pullToRefreshAnimationDidPause(_ view: RefreshView, direction: PullDirection)
     func pullToRefreshAnimationDidResume(_ view: RefreshView, direction: PullDirection)
     func pullToRefreshAnimationDidStart(_ view: RefreshView, direction: PullDirection)

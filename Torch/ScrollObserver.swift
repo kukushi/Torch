@@ -12,7 +12,7 @@ class ScrollObserver: NSObject {
     let option: PullOption
     let action: RefreshAction
 
-    var isEnabled: Bool = true
+    var isEnabled = true
 
     weak var refreshView: RefreshView?
     weak var containerView: UIView?
@@ -25,7 +25,7 @@ class ScrollObserver: NSObject {
     private var lastRefreshingHeight: CGFloat = 0
 
     // When the content height significant changed, disable the bottom refreshing until it go back to normal region
-    private var contentHeightSignificantShrinked = false
+    private var contentHeightSignificantShrank = false
 
     var contentOffsetBeforeAnimationEnd: CGPoint?
     var contentInsetBeforeAnimationEnd: UIEdgeInsets?
@@ -115,7 +115,7 @@ class ScrollObserver: NSObject {
         }
 
         guard containerView?.superview is UIScrollView else {
-            fatalError("ScrollObserver can only be used in UIScrollView and it's subclasses.")
+            preconditionFailure("ScrollObserver can only be used in UIScrollView and it's subclasses.")
         }
 
         observingContentOffsetToken = scrollView.observe(\.contentOffset,
@@ -130,7 +130,7 @@ class ScrollObserver: NSObject {
             observingContentSizeToken = scrollView.observe(\.contentSize, options: [.old, .new]) { [weak self] (_, change) in
                 guard let self = self else { return }
                 if let newValue = change.newValue, let oldValue = change.oldValue {
-                    self.contentHeightSignificantShrinked = (oldValue.height - newValue.height) >= self.pullingHeight
+                    self.contentHeightSignificantShrank = (oldValue.height - newValue.height) >= self.pullingHeight
                 }
                 self.observingContentSizeChanges()
             }
@@ -193,12 +193,12 @@ class ScrollObserver: NSObject {
             let offset = scrollView.contentOffset.y - appropriateContentInset.bottom
             let bottomOffset = containerHeight + offset - contentHeight
 
-            // Ignore offset change when height shrinked
-            if contentHeightSignificantShrinked {
+            // Ignore offset change when height shrank
+            if contentHeightSignificantShrank {
                 if bottomOffset >= viewHeight {
                     return
                 } else {
-                    contentHeightSignificantShrinked = false
+                    contentHeightSignificantShrank = false
                 }
             }
 
@@ -207,7 +207,7 @@ class ScrollObserver: NSObject {
                 state != .refreshing &&
                 lastRefreshingHeight != scrollView.contentSize.height {
                 if bottomOffset > -option.startBeforeReachingBottomFactor * scrollView.contentSize.height {
-                    print("[Torch] Start refreshing because almost reaching the bottom")
+                    debugLog("[Torch] Start refreshing because almost reaching the bottom")
                     lastRefreshingHeight = scrollView.contentSize.height
                     startAnimating()
                 }
@@ -288,7 +288,7 @@ class ScrollObserver: NSObject {
             self.contentInsetBeforeAnimationEnd = self.scrollView.contentInset
         }
 
-        let completionClosure = { [weak self] (completion: Bool) in
+        let completionClosure = { [weak self] (_: Bool) in
             guard let self = self else { return }
             guard let refreshView = self.refreshView else {
                 return
@@ -319,7 +319,7 @@ class ScrollObserver: NSObject {
 
         refreshView.pullToRefreshAnimationDidEnd(refreshView, direction: direction)
 
-        // Don't hold self. Action don't need to be exeuted if the view is released.
+        // Don't hold self. Action don't need to be executed if the view is released.
         let updateClosure = { [weak self] in
             guard let self = self else { return }
             // Restore to original position only when offset is unchanged

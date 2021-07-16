@@ -13,12 +13,12 @@ open class PlainRefreshView: UIView {
     private var isAnimating = false
 
     open var lineColor: UIColor {
-        set {
-            layerLoader.strokeColor = newValue.cgColor
-        }
         get {
             // swiftlint:disable:next force_unwrapping
             return UIColor(cgColor: layerLoader.strokeColor!)
+        }
+        set {
+            layerLoader.strokeColor = newValue.cgColor
         }
     }
 

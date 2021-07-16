@@ -14,7 +14,7 @@ public class TorchControl {
     private var pullDownObserver: ScrollObserver?
     private var pullUpObserver: ScrollObserver?
 
-    public var isEnabled: Bool = true {
+    public var isEnabled = true {
         didSet {
             pullDownObserver?.isEnabled = isEnabled
             pullUpObserver?.isEnabled = isEnabled
@@ -82,7 +82,7 @@ public class TorchControl {
             containerView.widthAnchor.constraint(equalTo: baseView.widthAnchor),
             containerView.heightAnchor.constraint(equalToConstant: option.areaHeight),
             topConstraint
-            ])
+        ])
 
         refreshObserver.topConstraint = topConstraint
 

@@ -18,7 +18,7 @@ public func delay(_ delay: Double, closure:@escaping () -> Void) {
 class DetailTableViewController: UITableViewController {
 
     var option: PullOption!
-    var additionalOption: AddtionalPullOption!
+    var additionalOption: AdditionalPullOption!
 
     var count = 20
 

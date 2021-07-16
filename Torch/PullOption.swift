@@ -35,7 +35,7 @@ public struct PullOption {
     public var startBeforeReachingBottomFactor: CGFloat = 0.1 {
         didSet {
             guard startBeforeReachingBottomFactor > 0 && startBeforeReachingBottomFactor < 1 else {
-                fatalError("`startBeforeReachingBottomFactor` should be range 0 to 1.")
+                preconditionFailure("`startBeforeReachingBottomFactor` should be range 0 to 1.")
             }
         }
     }

@@ -9,7 +9,7 @@
 import UIKit
 import Torch
 
-struct AddtionalPullOption {
+struct AdditionalPullOption {
     var addCount: Int
     var scrollToOriginalPosition: Bool
     var shouldAnimateStop: Bool
@@ -43,7 +43,7 @@ class OptionViewController: UITableViewController {
             pullOption.startBeforeReachingBottomFactor = 0.1
 
             let newCount = refreshWithoutNewDataSwitch.isOn ? 0 : 50
-            let additionalOption = AddtionalPullOption(addCount: newCount,
+            let additionalOption = AdditionalPullOption(addCount: newCount,
                                                        scrollToOriginalPosition: scrollToOriginalPosition.isOn,
                                                        shouldAnimateStop: animatedStopSwitch.isOn)
 
