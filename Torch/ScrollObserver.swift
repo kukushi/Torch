@@ -39,8 +39,10 @@ class ScrollObserver: NSObject {
     }
 
     private var isPullingDown: Bool {
-        return direction == .down
+        direction == .down
     }
+
+    private var oldContentSizeHeight: CGFloat?
 
     private var originalContentOffsetY: CGFloat = 0
 
@@ -118,23 +120,29 @@ class ScrollObserver: NSObject {
             preconditionFailure("ScrollObserver can only be used in UIScrollView and it's subclasses.")
         }
 
+        if !isPullingDown {
+            observingContentSizeToken = scrollView.observe(\.contentSize, options: [.new]) { [weak self] (_, _) in
+                guard let self = self else { return }
+                self.checkIfContentHeightShrank()
+                self.observingContentSizeChanges()
+            }
+        }
+
         observingContentOffsetToken = scrollView.observe(\.contentOffset,
                                                          options: .new) { [weak self] (_, _) in
             guard let self = self else { return }
+            self.checkIfContentHeightShrank()
             self.observingContentOffsetChanges()
         }
 
         originalContentOffsetY = scrollView.contentOffset.y
+    }
 
-        if !isPullingDown {
-            observingContentSizeToken = scrollView.observe(\.contentSize, options: [.old, .new]) { [weak self] (_, change) in
-                guard let self = self else { return }
-                if let newValue = change.newValue, let oldValue = change.oldValue {
-                    self.contentHeightSignificantShrank = (oldValue.height - newValue.height) >= self.pullingHeight
-                }
-                self.observingContentSizeChanges()
-            }
+    private func checkIfContentHeightShrank() {
+        if let oldValue = oldContentSizeHeight {
+            contentHeightSignificantShrank = (oldValue - scrollView.contentSize.height) >= pullingHeight
         }
+        oldContentSizeHeight = scrollView.contentSize.height
     }
 
     // MARK: KVO

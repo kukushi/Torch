@@ -21,7 +21,10 @@ public enum PullState {
 }
 
 public enum PullDirection {
+    /// Pull down to refresh
     case down
+
+    /// Pull up to refresh
     case up
 }
 
