@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 gem 'fastlane'
-gem 'xcpretty'
 gem 'cocoapods'
+gem "xcpretty", '0.3.0'

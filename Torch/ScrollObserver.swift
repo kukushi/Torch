@@ -24,8 +24,8 @@ class ScrollObserver: NSObject {
     // Keep track of the last refreshing height, used to prevent infinite automatic refreshing
     private var lastRefreshingHeight: CGFloat = 0
 
-    // When the content height significant changed, disable the bottom refreshing until it go back to normal region
-    private var contentHeightSignificantShrank = false
+    // Whether use is tracking/dragging the scroll view
+    private var isUserTriggeringPull = false
 
     var contentOffsetBeforeAnimationEnd: CGPoint?
     var contentInsetBeforeAnimationEnd: UIEdgeInsets?
@@ -123,7 +123,7 @@ class ScrollObserver: NSObject {
         if !isPullingDown {
             observingContentSizeToken = scrollView.observe(\.contentSize, options: [.new]) { [weak self] (_, _) in
                 guard let self = self else { return }
-                self.checkIfContentHeightShrank()
+                self.validatePulling()
                 self.observingContentSizeChanges()
             }
         }
@@ -131,18 +131,15 @@ class ScrollObserver: NSObject {
         observingContentOffsetToken = scrollView.observe(\.contentOffset,
                                                          options: .new) { [weak self] (_, _) in
             guard let self = self else { return }
-            self.checkIfContentHeightShrank()
+            self.validatePulling()
             self.observingContentOffsetChanges()
         }
 
         originalContentOffsetY = scrollView.contentOffset.y
     }
 
-    private func checkIfContentHeightShrank() {
-        if let oldValue = oldContentSizeHeight {
-            contentHeightSignificantShrank = (oldValue - scrollView.contentSize.height) >= pullingHeight
-        }
-        oldContentSizeHeight = scrollView.contentSize.height
+    private func validatePulling() {
+        isUserTriggeringPull = !scrollView.isDragging && !scrollView.isTracking && !scrollView.isDecelerating
     }
 
     // MARK: KVO
@@ -201,12 +198,12 @@ class ScrollObserver: NSObject {
             let offset = scrollView.contentOffset.y - appropriateContentInset.bottom
             let bottomOffset = containerHeight + offset - contentHeight
 
-            // Ignore offset change when height shrank
-            if contentHeightSignificantShrank {
+            // Ignore offset change if not triggered by user
+            if isUserTriggeringPull {
                 if bottomOffset >= viewHeight {
                     return
                 } else {
-                    contentHeightSignificantShrank = false
+                    isUserTriggeringPull = false
                 }
             }
 
